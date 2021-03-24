@@ -1,0 +1,61 @@
+﻿@page "/"
+@using Model
+
+<table border="1">
+  
+  @foreach(var item in RoomList)
+  {
+<tr>
+  <td><input @bind-value="item.RoomName" @bind-value:event="oninput"/></td>
+  <td><input @bind-value="item.Price" @bind-value:event="oninput"/></td>
+  @foreach (var prop in item.RoomProps)
+  {
+    <td>@prop.Name - @prop.Value</td>
+  }
+</tr>
+  }
+</table>
+<br />
+<div>
+  @foreach (var item in RoomList)
+  {
+  <p>
+    @(item.RoomName)'s Price is @(item.Price)
+  </p>
+  }
+</div>
+
+@code{
+  string SelectedRoomProp = "";
+  List<BlazorRoom> RoomList = new List<BlazorRoom>();
+
+  protected override void OnInitialized()
+  {
+    base.OnInitialized();
+
+    RoomList.Add(new BlazorRoom()
+    {
+      Id=1,
+      RoomName="t1",
+      IsActive=true,
+      Price=111,
+      RoomProps=new List<BlazorRoomProp> {
+        new BlazorRoomProp{Id=1,Name="sq ft",Value="100"},
+        new BlazorRoomProp{Id=2,Name="occupancy",Value="3"}
+      }
+
+    });
+    RoomList.Add(new BlazorRoom()
+    {
+      Id = 2,
+      RoomName = "t2",
+      IsActive = true,
+      Price=222,
+      RoomProps = new List<BlazorRoomProp> {
+        new BlazorRoomProp{Id=1,Name="sq ft",Value="200"},
+        new BlazorRoomProp{Id=2,Name="occupancy",Value="23"}
+      }
+
+    });
+  }
+}
