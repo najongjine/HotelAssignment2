@@ -1,0 +1,27 @@
+﻿<h3>LifeCycle</h3>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<div>
+  @foreach (var item in EventType)
+  {
+    @item
+    <hr />
+  }
+</div>
+
+@code {
+  List<string> EventType = new List<string>();
+
+  protected override void OnInitialized()
+  {
+    base.OnInitialized();
+    EventType.Add("Child- Oninitialized called");
+  }
+
+  protected override async Task OnInitializedAsync()
+  {
+    await base.OnInitializedAsync();
+    EventType.Add("Child- OninitializedAsync called");
+    await Task.Delay(1000);
+  }
+}

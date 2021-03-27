@@ -1,0 +1,8 @@
+﻿<div class="bg-light border p-2 col-5">
+  <h4 class="text-secondary">Amenitie - @Amenitie.Id</h4>
+  <p>Name: @Amenitie.name</p>
+  <p>Description: @Amenitie.description</p>
+</div>
+@code {
+  [Parameter] public BlazorAmenitie Amenitie { get; set; }
+}

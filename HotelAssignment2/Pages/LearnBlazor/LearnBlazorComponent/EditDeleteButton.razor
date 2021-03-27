@@ -1,5 +1,7 @@
-﻿<p><button>Edit</button><button>Delete</button></p>
+﻿@if (IsAdmin) {
+  <p><button>Edit</button><button>Delete</button></p>
+}
 
 @code {
-
+  [Parameter] public bool IsAdmin { get; set; } = false;
 }
