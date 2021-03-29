@@ -1,6 +1,5 @@
 ﻿<h3>LifeCycle</h3>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 <div>
   @foreach (var item in EventType)
   {
@@ -10,6 +9,7 @@
 </div>
 
 @code {
+  [Parameter] public int CountValue { get; set; }
   List<string> EventType = new List<string>();
 
   protected override void OnInitialized()
@@ -18,10 +18,9 @@
     EventType.Add("Child- Oninitialized called");
   }
 
-  protected override async Task OnInitializedAsync()
+  protected override void OnParametersSet()
   {
-    await base.OnInitializedAsync();
-    EventType.Add("Child- OninitializedAsync called");
-    await Task.Delay(1000);
+    EventType.Add("child- OnParametersSet called");
   }
+
 }

@@ -1,8 +1,11 @@
-﻿@page "/lifecycle"
+﻿@using System.Threading.Tasks
+@using System.Timers
+@page "/lifecycle"
 <h3>LifeCycle</h3>
+<h3>Now: @now</h3>
 
 <div class="border">
-  <LifeCycleComponent></LifeCycleComponent>
+  <LifeCycleComponent CountValue="@currentCount"></LifeCycleComponent>
 </div>
 
 <h1>Counter</h1>
@@ -18,9 +21,15 @@
   }
 </div>
 
+<div>
+  <button @onclick="NowDate">NowDate</button>
+</div>
+
 @code {
   private int currentCount = 0;
+  private string now = null;
   List<string> EventType = new List<string>();
+  private Timer timer = new Timer(1000);
 
   private void IncrementCount()
   {
@@ -30,13 +39,52 @@
   protected override void OnInitialized()
   {
     base.OnInitialized();
+
     EventType.Add("Oninitialized called");
+    //timer.Elapsed += (sender, EventArgs) => Timer_TICK();
+    //timer.Start();
+
   }
 
   protected override async Task OnInitializedAsync()
   {
     await base.OnInitializedAsync();
     EventType.Add("OninitializedAsync called");
-    await Task.Delay(1000);
+  }
+
+  protected override void OnParametersSet()
+  {
+    EventType.Add("OnParametersSet called");
+  }
+  protected override async Task OnParametersSetAsync()
+  {
+    EventType.Add("OnParametersSetAsync called");
+  }
+
+  protected override void OnAfterRender(bool firstRender)
+  {
+    if (firstRender)
+    {
+      currentCount = 111;
+    }
+    else
+    {
+      currentCount = 999;
+    }
+    EventType.Add("OnAferRender is called");
+  }
+
+  private void Timer_TICK()
+  {
+    _ = InvokeAsync(() =>
+    {
+      now = DateTime.UtcNow.ToString();
+      //StateHasChanged();
+    });
+  }
+
+  public void NowDate()
+  {
+    now = DateTime.UtcNow.ToString();
   }
 }
