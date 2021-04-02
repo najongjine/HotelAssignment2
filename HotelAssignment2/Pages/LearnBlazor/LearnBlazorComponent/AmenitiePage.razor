@@ -1,8 +1,17 @@
-﻿<div class="bg-light border p-2 col-5">
+﻿<div class="bg-light border p-2 col-5" @onclick="(args)=>GetSelectedAmenity(args,Amenitie.name)">
   <h4 class="text-secondary">Amenitie - @Amenitie.Id</h4>
   <p>Name: @Amenitie.name</p>
   <p>Description: @Amenitie.description</p>
+  <p>RF from Parent - @FirstFragment @SecondFragment</p>
 </div>
 @code {
   [Parameter] public BlazorAmenitie Amenitie { get; set; }
+  [Parameter] public EventCallback<string> OnSelectedAmenity { get; set; }
+  [Parameter] public RenderFragment FirstFragment { get; set; }
+  [Parameter] public RenderFragment SecondFragment { get; set; }
+
+  protected async Task GetSelectedAmenity(MouseEventArgs e,string amenityName)
+  {
+    await OnSelectedAmenity.InvokeAsync(amenityName);
+  }
 }

@@ -9,23 +9,32 @@
   <div class="row container">
     <div class="col-12">
       <h4>Hotel Room's</h4>
+      <span>Rooms Selected - @SelectedRooms</span>
     </div>
     @foreach (var item in RoomList)
     {
-      <IndividualRoom Room="@item"></IndividualRoom>
+      <IndividualRoom OnRoomCheckboxSelectionChanged="RoomSelectionCounterChanged" Room="@item"></IndividualRoom>
     }
     <div class="col-12 mt-4">
       <h2>Hotel Amenitie's</h2>
     </div>
     @foreach (var item in Amenities)
     {
-      <AmenitiePage Amenitie="item"></AmenitiePage>
+  <AmenitiePage OnSelectedAmenity="AmenitySelectionChanged" Amenitie="item">
+    <FirstFragment>#1</FirstFragment>
+    <SecondFragment>#2</SecondFragment>
+  </AmenitiePage>
     }
+  </div>
+
+  <div class="col-12">
+    <p class="text-secondary"> Selected Amenity: @SelectedAmenity</p>
   </div>
 </div>
 
 @code{
-
+  private string SelectedAmenity { get; set; } = "";
+  public int SelectedRooms { get; set; } = 0;
   List<BlazorRoom> RoomList = new List<BlazorRoom>();
   List<BlazorAmenitie> Amenities = new List<BlazorAmenitie>();
 
@@ -76,5 +85,21 @@
   private async Task IamportRequestPay()
   {
     await JsRunTime.InvokeVoidAsync("IamportRequestPay");
+  }
+
+  protected void RoomSelectionCounterChanged(bool isRoomSelected)
+  {
+    if (isRoomSelected)
+    {
+      SelectedRooms++;
+    }
+    else
+    {
+      SelectedRooms--;
+    }
+  }
+  protected void AmenitySelectionChanged(string _amenity)
+  {
+    SelectedAmenity = _amenity;
   }
 }
