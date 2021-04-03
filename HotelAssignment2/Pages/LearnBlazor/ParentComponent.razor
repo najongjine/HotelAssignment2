@@ -7,6 +7,7 @@
     Render Fragment From Parent!
     <hr />
   </ChildContent>
+
   <DangerChildContent>
     <hr />
     Danger Child content
@@ -15,8 +16,11 @@
 
 </ChildComponent>
 
+<AnotherChildComponent placeholder="from parent plceholder"></AnotherChildComponent>
+
 <p><b>@messageText</b></p>
 @code {
+
   private string messageText = "";
 
   private void ShowMessage(MouseEventArgs e)
