@@ -12,8 +12,9 @@ namespace Models
     public int Id { get; set; }
     [Required]
     public string Name { get; set; }
+    [Range(1, 10)]
     [Required]
-    public int Occupancy { get; set; }
+    public int Occupancy { get; set; } = 1;
     [Range(1,3000)]
     public double RegularRate { get; set; }
     public string Details { get; set; }

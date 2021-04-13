@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Business.Repository.IRepository;
+using Business.Repository;
 
 namespace HotelAssignment2
 {
@@ -32,7 +34,7 @@ namespace HotelAssignment2
       // dependency container에 넣는 작업
       services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
       services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
+      services.AddScoped<IHotelRoomRepository, HotelRoomRepository>();
       services.AddRazorPages();
       services.AddServerSideBlazor();
       services.AddSingleton<WeatherForecastService>();
