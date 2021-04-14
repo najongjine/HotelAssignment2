@@ -1,0 +1,39 @@
+﻿@page "/blazorjs"
+@inject IJSRuntime JsRuntime
+<h3>BlazorJs</h3>
+
+<div>
+  <button @onclick="(()=>TestConirmationBox(ConfirmMessage))">Confirm</button>
+</div>
+<div>
+  <button @onclick="ToastrSuccess">ToastrSuccess</button>
+</div>
+<div>
+  <button @onclick="ToastrError">ToastrError</button>
+</div>
+<div>
+  @if(ConfirmResult)
+  {
+    <p>confirmed</p>
+  }
+  else
+  {
+    <p>not confirmed</p>
+  }
+</div>
+@code {
+  private string ConfirmMessage = "want to click?";
+  private bool ConfirmResult { get; set; }
+  private async Task TestConirmationBox(string message)
+  {
+    ConfirmResult = await JsRuntime.InvokeAsync<bool>("confirm", message);
+  }
+  private async Task ToastrSuccess()
+  {
+    await JsRuntime.ToastrSuccess("success message");
+  }
+  private async Task ToastrError()
+  {
+    await JsRuntime.ToastrError("error message");
+  }
+}

@@ -1,5 +1,6 @@
 ﻿@using System.Threading
 @page "/lifecycle"
+@inject IJSRuntime JsRuntime
 <h3>LifeCycle</h3>
 <h3>Now: @now</h3>
 
@@ -46,6 +47,7 @@
   {
     await base.OnInitializedAsync();
     EventType.Add("OninitializedAsync called");
+
   }
 
   protected override void OnParametersSet()
@@ -68,7 +70,9 @@
       currentCount = 999;
     }
     EventType.Add("OnAferRender is called");
+
   }
+
   protected override bool ShouldRender()
   {
     EventType.Add("ShouldRender is called");

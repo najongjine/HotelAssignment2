@@ -1,0 +1,11 @@
+﻿@page "/iamport"
+@inject IJSRuntime JsRuntime
+<h3>IamportTest</h3>
+
+@code {
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    await JsRuntime.InvokeVoidAsync("IamportInit");
+    await JsRuntime.InvokeVoidAsync("IamportRequestPay");
+  }
+}
