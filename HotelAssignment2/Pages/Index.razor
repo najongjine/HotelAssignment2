@@ -1,3 +1,47 @@
 ﻿@page "/"
-
 Index Page
+@DummyStr
+
+<div>
+  @foreach(var e in dummyList)
+      {
+        <div>
+          <p>@e.Name, @e.Birthday, input1: <input @bind="@DummyStr" /> <button @onclick="(arg)=>ChangeFunc(e,DummyStr)">change</button></p>
+
+        </div>
+      }
+</div>
+<div>
+  input1: <input @bind="@DummyStr" @bind:event="oninput"/>
+</div>
+
+<div>
+  input2: <input @bind="@DummyStr" @bind:event="oninput"/>
+</div>
+@code{
+  private int DummyStr { get; set; } = 0;
+  private List<Employee> dummyList=new List<Employee>();
+
+  protected override void OnInitialized()
+  {
+    var employ1 = new Employee { Birthday = 1, Name = 1 };
+    dummyList.Add(employ1);
+
+    var employ2 = new Employee { Birthday = 2, Name = 2 };
+    dummyList.Add(employ2);
+
+    var employ3 = new Employee { Birthday = 3, Name = 3 };
+    dummyList.Add(employ3);
+  }
+
+  public class Employee
+  {
+    public int Name { get; set; }
+    public int Birthday { get; set; }
+  }
+
+  private void ChangeFunc(Employee e, int dummyInt)
+  {
+    e.Name = dummyInt;
+  }
+}

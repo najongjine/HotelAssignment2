@@ -17,5 +17,14 @@ namespace HotelAssignment2.Helper
     {
       await JSRuntime.InvokeVoidAsync("ShowToastr", "error", message);
     }
+
+    public static async Task SweetAlertSuccess(this IJSRuntime JsRuntime, string message)
+    {
+      await JsRuntime.InvokeVoidAsync("ShowSweetAlert", "success",message);
+    }
+    public static async Task SweetAlertError(this IJSRuntime JsRuntime, string message)
+    {
+      await JsRuntime.InvokeVoidAsync("ShowSweetAlert", "error", message);
+    }
   }
 }

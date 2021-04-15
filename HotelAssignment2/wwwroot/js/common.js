@@ -6,3 +6,22 @@
     toastr.error(message, 'error second message')
   }
 }
+
+window.ShowSweetAlert = (type, message) => {
+  if (type == "success") {
+    Swal.fire({
+      title: 'sweet alert success title',
+      text: message,
+      icon: 'success',
+      confirmButtonText: 'Cool'
+    })
+  }
+  else if (type == "error") {
+    Swal.fire({
+      title: 'sweet alert error title',
+      text: message,
+      icon: 'error',
+      confirmButtonText: 'Cool'
+    })
+  }
+}

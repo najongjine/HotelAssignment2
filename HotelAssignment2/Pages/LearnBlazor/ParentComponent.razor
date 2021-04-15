@@ -3,7 +3,10 @@
 
 <CascadingValue Value="MessageForGrandChild" Name="MessageForGrandChild">
   <CascadingValue Value="@LuckNumber" Name="LuckNumberFromGrandParent">
-    <ChildComponent OnClickBtnMethod="ShowMessage" Title="this title is passed as parameter from PArent Component">
+
+    <!-- @ref == ChildComponent 가 가진 기능들에 직접접근 가능하게 해줌  여기에 써준 이름과-->
+    <ChildComponent @ref="childComp"
+                    OnClickBtnMethod="ShowMessage" Title="this title is passed as parameter from PArent Component">
       <ChildContent>
         <hr />
         Render Fragment From Parent!
@@ -23,7 +26,13 @@
 <AnotherChildComponent placeholder="from parent plceholder"> <p>test!!</p></AnotherChildComponent>
 
 <p><b>@messageText</b></p>
+
+<div class="row">
+  <button @onclick="()=>childComp.ShowToastrSuccess()">ShowChildToastr</button>
+</div>
 @code {
+  // 상단 ref 에 먹인 이름이 같아야함
+  private ChildComponent childComp;
   private string MessageForGrandChild { get; set; }= "this is a message from grandparent";
   public int LuckNumber { get; set; } = 7;
 

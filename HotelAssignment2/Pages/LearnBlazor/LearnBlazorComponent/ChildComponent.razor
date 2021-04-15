@@ -1,4 +1,6 @@
-﻿<div>
+﻿@inject IJSRuntime JsRuntime
+
+<div>
   <div class="alert alert-info">@Title</div>
   <div class="alert alert-success">
 
@@ -22,12 +24,19 @@
   </p>
   <button class="btn" @onclick="OnClickBtnMethod">Button to be Clicked</button>
   <br />
-  <GrandChildComponent ></GrandChildComponent>
+  <GrandChildComponent></GrandChildComponent>
 </div>
+
 
 @code {
   [Parameter] public string Title { get; set; }
   [Parameter] public RenderFragment ChildContent { get; set; }
   [Parameter] public RenderFragment DangerChildContent { get; set; }
   [Parameter] public EventCallback<MouseEventArgs> OnClickBtnMethod { get; set; }
+
+  public async Task ShowToastrSuccess()
+  {
+    await JsRuntime.ToastrSuccess("dfdg success child");
+
+  }
 }

@@ -21,6 +21,13 @@
     <p>not confirmed</p>
   }
 </div>
+
+<div>
+  <button @onclick="SweetAlertSuccess">SweetAlertSuccess</button>
+</div>
+<div>
+  <button @onclick="SweetAlertError">SweetAlertError</button>
+</div>
 @code {
   private string ConfirmMessage = "want to click?";
   private bool ConfirmResult { get; set; }
@@ -35,5 +42,13 @@
   private async Task ToastrError()
   {
     await JsRuntime.ToastrError("error message");
+  }
+  private async Task SweetAlertSuccess()
+  {
+    await JsRuntime.SweetAlertSuccess("sweet alert success msg");
+  }
+  private async Task SweetAlertError()
+  {
+    await JsRuntime.SweetAlertError("sweet alert error msg");
   }
 }
