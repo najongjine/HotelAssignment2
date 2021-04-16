@@ -22,5 +22,8 @@ namespace DataAccess.Data
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     public string UpdatedBy { get; set; }
     public DateTime UpdatedDate { get; set; }
+
+    // virtual 키워드르 넣으면 DB에는 반영 안함
+    public virtual ICollection<HotelRoomImage> HotelRoomImages { get; set; }
   }
 }
