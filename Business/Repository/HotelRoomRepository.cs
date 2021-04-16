@@ -17,8 +17,8 @@ namespace Business.Repository
     private readonly IMapper _mapper;
 
     public HotelRoomRepository(ApplicationDbContext db, IMapper mapper) // it is alrdy iniside the dependency injection container
-      // it's getting mapper and db using dependency injection inside the constructor
-      // this style is called dpendency injection
+                                                                        // it's getting mapper and db using dependency injection inside the constructor
+                                                                        // this style is called dpendency injection
     {
       _mapper = mapper;
       _db = db;
@@ -38,7 +38,7 @@ namespace Business.Repository
     public async Task<int> DeleteHotelRoom(int roomId)
     {
       var roomDetails = await _db.HotelRooms.FindAsync(roomId);
-      if(roomDetails != null)
+      if (roomDetails != null)
       {
         _db.HotelRooms.Remove(roomDetails);
         return await _db.SaveChangesAsync();
@@ -50,9 +50,10 @@ namespace Business.Repository
     {
       try
       {
-        IEnumerable<HotelRoomDTO> hotelRoomDTOs=_mapper.Map<IEnumerable<HotelRoom>,IEnumerable<HotelRoomDTO> >( _db.HotelRooms);
+        IEnumerable<HotelRoomDTO> hotelRoomDTOs = _mapper.Map<IEnumerable<HotelRoom>, IEnumerable<HotelRoomDTO>>(_db.HotelRooms);
         return hotelRoomDTOs;
-      }catch(Exception ex)
+      }
+      catch (Exception ex)
       {
         return null;
       }
@@ -62,20 +63,30 @@ namespace Business.Repository
     {
       try
       {
-        HotelRoomDTO hotelRoom = _mapper.Map<HotelRoom,HotelRoomDTO>( await _db.HotelRooms.FirstOrDefaultAsync(x => x.Id == roomId));
+        /* FirstOrDefaultAsync 와 FindAsync 은 기능적으론 같은데, FirstOrDefaultAsync 는 ( ) 안에 && 로 조건을 더 넣을수 있다 */
+        HotelRoomDTO hotelRoom = _mapper.Map<HotelRoom, HotelRoomDTO>(await _db.HotelRooms.FirstOrDefaultAsync(x => x.Id == roomId));
         return hotelRoom;
-      }catch(Exception ex)
+      }
+      catch (Exception ex)
       {
         return null;
       }
     }
 
-    public async Task<HotelRoomDTO> IsRoomUnique(string name)
+    public async Task<HotelRoomDTO> IsRoomUnique(string name, int roomId = 0)
     {
       try
       {
-        HotelRoomDTO hotelRoom = _mapper.Map<HotelRoom, HotelRoomDTO>(await _db.HotelRooms.FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower()));
-        return hotelRoom;
+        if (roomId < 1)
+        {
+          HotelRoomDTO hotelRoom = _mapper.Map<HotelRoom, HotelRoomDTO>(await _db.HotelRooms.FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower()));
+          return hotelRoom;
+        }
+        else
+        {
+          HotelRoomDTO hotelRoom = _mapper.Map<HotelRoom, HotelRoomDTO>(await _db.HotelRooms.FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower() && x.Id!=roomId));
+          return hotelRoom;
+        }
       }
       catch (Exception ex)
       {
@@ -87,7 +98,7 @@ namespace Business.Repository
     {
       try
       {
-        if(roomId == hotelRoomDTO.Id)
+        if (roomId == hotelRoomDTO.Id)
         {
           HotelRoom roomDetails = await _db.HotelRooms.FindAsync(roomId);
 
@@ -97,13 +108,15 @@ namespace Business.Repository
           room.UpdatedBy = "";
           room.UpdatedDate = DateTime.Now;
           var updatedRoom = _db.HotelRooms.Update(room);
+          await _db.SaveChangesAsync();
           return _mapper.Map<HotelRoom, HotelRoomDTO>(updatedRoom.Entity);
         }
         else
         {
           return null;
         }
-      }catch(Exception ex)
+      }
+      catch (Exception ex)
       {
         return null;
       }
