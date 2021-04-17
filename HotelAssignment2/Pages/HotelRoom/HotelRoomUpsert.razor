@@ -1,9 +1,12 @@
 ﻿@page "/hotel-room/create"
 @page "/hotel-room/edit/{Id:int}"
 @using Business.Repository.IRepository
+
+<!-- 여기 있는것들은 dependency Injection 기능임. Startup 에 service.add 를 먼줘 해줘야함 -->
 @inject IHotelRoomRepository HotelRoomRepository
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
+@inject IFileUpload FileUpload
 
 <div class="row mt-2 mb-5">
   <h3 class="card-title text-info mb-3 ml-3">@Title Create Hotel Room</h3>
@@ -35,6 +38,9 @@
         <div class="form-group">
           <label>Details</label>
           <InputTextArea @bind-Value="HotelRoomModel.Details" class="form-control"></InputTextArea>
+        </div>
+        <div class="form-group">
+          <InputFile OnChange="HandleImageUpload" multiple></InputFile>
         </div>
         <div class="form-group">
           <button class="btn btn-primary">@Title Room </button>
@@ -92,5 +98,50 @@
     }
 
     NavigationManager.NavigateTo("hotel-room");
+  }
+
+  private async Task HandleImageUpload(InputFileChangeEventArgs e)
+  {
+    try
+    {
+      var images = new List<string>();
+      if (e.GetMultipleFiles().Count > 0)
+      {
+        foreach (var file in e.GetMultipleFiles())
+        {
+          if (file.ContentType.StartsWith("image"))
+          {
+            // www root folder 밑에있는 파일의 경로를 리턴해줌
+            var uploadedImagePath = await FileUpload.UploadFile(file);
+            images.Add(uploadedImagePath);
+          }
+          else
+          {
+            await JsRuntime.ToastrError("upload only images");
+          }
+        }
+        if (images.Any())
+        {
+          if (HotelRoomModel.ImageUrls != null && HotelRoomModel.ImageUrls.Any())
+          {
+            HotelRoomModel.ImageUrls.AddRange(images);
+          }
+          else
+          {
+            HotelRoomModel.ImageUrls = new List<string>();
+            HotelRoomModel.ImageUrls.AddRange(images);
+          }
+        }
+        else
+        {
+          await JsRuntime.ToastrError("error in uploading images");
+        }
+      }
+
+    }
+    catch (Exception ex)
+    {
+
+    }
   }
 }

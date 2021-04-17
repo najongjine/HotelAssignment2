@@ -15,6 +15,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Business.Repository.IRepository;
 using Business.Repository;
+using HotelAssignment2.Service.IService;
+using HotelAssignment2.Service;
 
 namespace HotelAssignment2
 {
@@ -35,6 +37,8 @@ namespace HotelAssignment2
       services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
       services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
       services.AddScoped<IHotelRoomRepository, HotelRoomRepository>();
+      services.AddScoped<IHotelImageRepository, HotelImagesRepository>();
+      services.AddScoped<IFileUpload, FileUpload>();
       services.AddRazorPages();
       services.AddServerSideBlazor();
       services.AddSingleton<WeatherForecastService>();
