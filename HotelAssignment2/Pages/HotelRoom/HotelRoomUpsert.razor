@@ -42,7 +42,7 @@
         <div class="form-group">
           <InputFile OnChange="HandleImageUpload" multiple></InputFile>
           <div class="row">
-            @if(HotelRoomModel.ImageUrls.Any())
+            @if(HotelRoomModel.ImageUrls!=null && HotelRoomModel.ImageUrls.Any())
             {
               int serial = 1;
               foreach (var roomImage in HotelRoomModel.ImageUrls)
