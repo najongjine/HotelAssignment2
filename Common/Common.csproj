@@ -4,8 +4,4 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="..\Models\HotelRoomDTO.cs" Link="HotelRoomDTO.cs" />
-  </ItemGroup>
-
 </Project>
