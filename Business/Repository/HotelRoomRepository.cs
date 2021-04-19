@@ -50,7 +50,7 @@ namespace Business.Repository
     {
       try
       {
-        IEnumerable<HotelRoomDTO> hotelRoomDTOs = _mapper.Map<IEnumerable<HotelRoom>, IEnumerable<HotelRoomDTO>>(_db.HotelRooms);
+        IEnumerable<HotelRoomDTO> hotelRoomDTOs = _mapper.Map<IEnumerable<HotelRoom>, IEnumerable<HotelRoomDTO>>(_db.HotelRooms.Include(x => x.HotelRoomImages));
         return hotelRoomDTOs;
       }
       catch (Exception ex)
@@ -63,8 +63,9 @@ namespace Business.Repository
     {
       try
       {
-        /* FirstOrDefaultAsync 와 FindAsync 은 기능적으론 같은데, FirstOrDefaultAsync 는 ( ) 안에 && 로 조건을 더 넣을수 있다 */
-        HotelRoomDTO hotelRoom = _mapper.Map<HotelRoom, HotelRoomDTO>(await _db.HotelRooms.FirstOrDefaultAsync(x => x.Id == roomId));
+        /* FirstOrDefaultAsync 와 FindAsync 은 기능적으론 같은데, FirstOrDefaultAsync 는 ( ) 안에 && 로 조건을 더 넣을수 있다 
+          .Include(x=>x.HotelRoomImages)  FK 설정된 entity 에 include 함수 써주면 자동으로 populate 해줌 */
+        HotelRoomDTO hotelRoom = _mapper.Map<HotelRoom, HotelRoomDTO>(await _db.HotelRooms.Include(x=>x.HotelRoomImages).FirstOrDefaultAsync(x => x.Id == roomId));
         return hotelRoom;
       }
       catch (Exception ex)

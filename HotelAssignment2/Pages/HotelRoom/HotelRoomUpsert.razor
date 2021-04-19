@@ -4,6 +4,7 @@
 
 <!-- 여기 있는것들은 dependency Injection 기능임. Startup 에 service.add 를 먼줘 해줘야함 -->
 @inject IHotelRoomRepository HotelRoomRepository
+@inject IHotelImageRepository HotelImagesRepository
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
 @inject IFileUpload FileUpload
@@ -42,7 +43,7 @@
         <div class="form-group">
           <InputFile OnChange="HandleImageUpload" multiple accept="image/*"></InputFile>
           <div class="row">
-            @if(HotelRoomModel.ImageUrls!=null && HotelRoomModel.ImageUrls.Any())
+            @if (HotelRoomModel.ImageUrls != null && HotelRoomModel.ImageUrls.Any())
             {
               int serial = 1;
               foreach (var roomImage in HotelRoomModel.ImageUrls)
@@ -71,6 +72,7 @@
   // Model == DTO
   private HotelRoomDTO HotelRoomModel { get; set; } = new HotelRoomDTO();
   private string Title { get; set; } = "Create";
+  private HotelRoomImageDTO RoomImage { get; set; } = new HotelRoomImageDTO();
 
   [Parameter] public int? Id { get; set; }
 
@@ -80,6 +82,10 @@
     {
       Title = "Update";
       HotelRoomModel = await HotelRoomRepository.GetHotelRoom(Id.Value);
+      if (HotelRoomModel?.HotelRoomImages != null)
+      {
+        HotelRoomModel.ImageUrls = HotelRoomModel.HotelRoomImages.Select(u => u.RoomImageUrl).ToList();
+      }
     }
     else
     {
@@ -105,6 +111,7 @@
       else
       {
         var createdResult = await HotelRoomRepository.CreateHotelRoom(HotelRoomModel);
+        await AddHotelRoomImage(createdResult);
         await JsRuntime.ToastrSuccess("Hotel room created successfully");
       }
     }
@@ -161,6 +168,19 @@
     {
       await JsRuntime.ToastrError(ex.Message);
       return;
+    }
+  }
+
+  private async Task AddHotelRoomImage(HotelRoomDTO roomDetails)
+  {
+    foreach (var imageUrl in HotelRoomModel.ImageUrls)
+    {
+      RoomImage = new HotelRoomImageDTO()
+      {
+        RoomId = roomDetails.Id,
+        RoomImageUrl = imageUrl
+      };
+      await HotelImagesRepository.CreateHotelRoomImage(RoomImage);
     }
   }
 }
