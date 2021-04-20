@@ -69,7 +69,7 @@
 </div>
 
 @code {
-  // Model == DTO
+    // Model == DTO
   private HotelRoomDTO HotelRoomModel { get; set; } = new HotelRoomDTO();
   private string Title { get; set; } = "Create";
   private HotelRoomImageDTO RoomImage { get; set; } = new HotelRoomImageDTO();
@@ -106,6 +106,10 @@
       if (HotelRoomModel.Id > 0 && Title == "Update")
       {
         var updateRoomResult = await HotelRoomRepository.UpdateHotelRoom(HotelRoomModel.Id, HotelRoomModel);
+        if (HotelRoomModel.ImageUrls != null && HotelRoomModel.ImageUrls.Any())
+        {
+          await AddHotelRoomImage(updateRoomResult);
+        }
         await JsRuntime.ToastrSuccess("Hotel room updated successfully");
       }
       else
@@ -115,7 +119,7 @@
         await JsRuntime.ToastrSuccess("Hotel room created successfully");
       }
     }
-    catch
+    catch(Exception ex)
     {
       // log exception
     }
@@ -173,14 +177,19 @@
 
   private async Task AddHotelRoomImage(HotelRoomDTO roomDetails)
   {
+
     foreach (var imageUrl in HotelRoomModel.ImageUrls)
     {
-      RoomImage = new HotelRoomImageDTO()
+      /* null 인 프로퍼티에서 .Where 함수를 실행시키면 exception이 일어남 */
+      if (HotelRoomModel.HotelRoomImages==null || HotelRoomModel.HotelRoomImages.Where(x => x.RoomImageUrl == imageUrl).Count() < 1)
       {
-        RoomId = roomDetails.Id,
-        RoomImageUrl = imageUrl
-      };
-      await HotelImagesRepository.CreateHotelRoomImage(RoomImage);
+        RoomImage = new HotelRoomImageDTO()
+        {
+          RoomId = roomDetails.Id,
+          RoomImageUrl = imageUrl
+        };
+        await HotelImagesRepository.CreateHotelRoomImage(RoomImage);
+      }
     }
   }
 }

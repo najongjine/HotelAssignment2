@@ -37,6 +37,7 @@ namespace HotelAssignment2.Service
 
     public async Task<string> UploadFile(IBrowserFile file)
     {
+      int MAXALLOWEDSIZE=5*1024*1024;
       try
       {
         FileInfo fileInfo=new FileInfo(file.Name);
@@ -45,7 +46,9 @@ namespace HotelAssignment2.Service
         var path = Path.Combine(_webHostEnvironment.WebRootPath,"RoomImages",fileName);
 
         var memoryStream = new MemoryStream();
-        await file.OpenReadStream().CopyToAsync(memoryStream);
+
+        /* file.OpenReadStream() 안에다가 byte를 넣어주면 서버에서 받는 최고한도의 파일용량이 된다 */
+        await file.OpenReadStream(MAXALLOWEDSIZE).CopyToAsync(memoryStream);
         if (!Directory.Exists(folderDirectory))
         {
           Directory.CreateDirectory(folderDirectory);
