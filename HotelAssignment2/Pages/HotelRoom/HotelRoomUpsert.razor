@@ -73,6 +73,7 @@
   private HotelRoomDTO HotelRoomModel { get; set; } = new HotelRoomDTO();
   private string Title { get; set; } = "Create";
   private HotelRoomImageDTO RoomImage { get; set; } = new HotelRoomImageDTO();
+  private List<string> DeletedImageNames { get; set; } = new List<string>();
 
   [Parameter] public int? Id { get; set; }
 
@@ -106,8 +107,17 @@
       if (HotelRoomModel.Id > 0 && Title == "Update")
       {
         var updateRoomResult = await HotelRoomRepository.UpdateHotelRoom(HotelRoomModel.Id, HotelRoomModel);
-        if (HotelRoomModel.ImageUrls != null && HotelRoomModel.ImageUrls.Any())
+        if ( (HotelRoomModel.ImageUrls != null && HotelRoomModel.ImageUrls.Any()) || (DeletedImageNames != null && DeletedImageNames.Any()) )
         {
+          if (DeletedImageNames != null && DeletedImageNames.Any())
+          {
+            foreach (var deletedImageName in DeletedImageNames)
+            {
+              var imageName = deletedImageName.Replace($"RoomImages/", "");
+              var result = FileUpload.DeleteFile(imageName);
+              await HotelImagesRepository.DeleteHotelRoomImageByImageUrl(deletedImageName);
+            }
+          }
           await AddHotelRoomImage(updateRoomResult);
         }
         await JsRuntime.ToastrSuccess("Hotel room updated successfully");
@@ -119,7 +129,7 @@
         await JsRuntime.ToastrSuccess("Hotel room created successfully");
       }
     }
-    catch(Exception ex)
+    catch (Exception ex)
     {
       // log exception
     }
@@ -180,8 +190,11 @@
 
     foreach (var imageUrl in HotelRoomModel.ImageUrls)
     {
-      /* null 인 프로퍼티에서 .Where 함수를 실행시키면 exception이 일어남 */
-      if (HotelRoomModel.HotelRoomImages==null || HotelRoomModel.HotelRoomImages.Where(x => x.RoomImageUrl == imageUrl).Count() < 1)
+      /* null 인 프로퍼티에서 .Where 함수를 실행시키면 exception이 일어남 
+       HotelRoomModel.HotelRoomImages 프로퍼티는 이미 DB에 저장된 이미지만을 가지고 있음.
+       imageUrl 은 Db 이미지+새로 추가한 이미지
+       DB 에 저장된것중에 imageUrl 과 같은게 없으면 새로 추가된 이미지이니, DB에 추가하라 */
+      if (HotelRoomModel.HotelRoomImages == null || HotelRoomModel.HotelRoomImages.Where(x => x.RoomImageUrl == imageUrl).Count() < 1)
       {
         RoomImage = new HotelRoomImageDTO()
         {
@@ -199,13 +212,19 @@
     {
       Console.WriteLine("entered dletephoto");
       var imageIndex = HotelRoomModel.ImageUrls.FindIndex(x => x == imageUrl);
-      var imageName = imageUrl.Replace($"RoomImages/","");
+      var imageName = imageUrl.Replace($"RoomImages/", "");
       if (HotelRoomModel.Id < 1 && Title == "Create")
       {
         var result = FileUpload.DeleteFile(imageName);
       }
+      else
+      {
+        DeletedImageNames ??= new List<string>();
+        DeletedImageNames.Add(imageUrl);
+      }
       HotelRoomModel.ImageUrls.RemoveAt(imageIndex);
-    }catch(Exception ex)
+    }
+    catch (Exception ex)
     {
       await JsRuntime.ToastrError(ex.Message);
     }
