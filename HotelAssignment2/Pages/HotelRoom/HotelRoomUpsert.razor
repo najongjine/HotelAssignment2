@@ -43,6 +43,11 @@
         <div class="form-group">
           <InputFile OnChange="HandleImageUpload" multiple accept="image/*"></InputFile>
           <div class="row">
+            @if (IsImageUploadProcessStarted) { 
+              <div class="col-md-12">
+                <span><i class="fade fa-spin fa-spinner"></i>Please wait... Images are uploading</span>
+              </div>
+            }
             @if (HotelRoomModel.ImageUrls != null && HotelRoomModel.ImageUrls.Any())
             {
               int serial = 1;
@@ -76,6 +81,8 @@
   private List<string> DeletedImageNames { get; set; } = new List<string>();
 
   [Parameter] public int? Id { get; set; }
+
+  private bool IsImageUploadProcessStarted { get; set; } = false;
 
   protected override async Task OnInitializedAsync()
   {
@@ -139,6 +146,7 @@
 
   private async Task HandleImageUpload(InputFileChangeEventArgs e)
   {
+    IsImageUploadProcessStarted = true;
     try
     {
       var images = new List<string>();
@@ -176,7 +184,7 @@
           return;
         }
       }
-
+      IsImageUploadProcessStarted = false;
     }
     catch (Exception ex)
     {
@@ -187,7 +195,8 @@
 
   private async Task AddHotelRoomImage(HotelRoomDTO roomDetails)
   {
-
+    //roomDetails == DB 메인 테이블에서 반영된 정보. 사진 테이블 정보는 없음
+    //HotelRoomModel == 프론트에서 조작된 자료를 반영하고 있는놈
     foreach (var imageUrl in HotelRoomModel.ImageUrls)
     {
       /* null 인 프로퍼티에서 .Where 함수를 실행시키면 exception이 일어남 

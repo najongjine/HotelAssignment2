@@ -55,12 +55,12 @@ namespace Business.Repository
     public async Task<int> DeleteHotelRoomImageByImageUrl(string imageUrl)
     {
       var allImages = await _db.HotelRoomsImages.FirstOrDefaultAsync(x=>x.RoomImageUrl.ToLower()==imageUrl.ToLower());
-      /*
+      
       if (allImages == null)
       {
         return 0;
       }
-      */
+      
       _db.HotelRoomsImages.Remove(allImages);
       return await _db.SaveChangesAsync();
     }
