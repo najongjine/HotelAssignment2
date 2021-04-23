@@ -3,6 +3,7 @@
 @using Business.Repository.IRepository
 @inject IHotelRoomRepository HotelRoomRepository
 @inject IJSRuntime JsRuntime
+@inject IFileUpload FileUpload
 <div class="row mt-4">
   <div class="col-8">
     <h4 class="card-title text-info">Hotel Room's</h4>
@@ -52,7 +53,7 @@
 
 </div>
 
-<DeleteConfirmation></DeleteConfirmation>
+<DeleteConfirmation ConfirmationChanged="ConfirmDelete_Click"></DeleteConfirmation>
 
 @code {
   private IEnumerable<HotelRoomDTO> HotelRooms { get; set; } = new List<HotelRoomDTO>();
@@ -71,6 +72,12 @@
   {
     if(isConfirmed && RoomId != null)
     {
+      HotelRoomDTO hotelRoom = await HotelRoomRepository.GetHotelRoom(RoomId.Value);
+      foreach(var image in hotelRoom.HotelRoomImages)
+      {
+        var imageName = image.RoomImageUrl.Replace($"RoomImages/", "");
+        FileUpload.DeleteFile(imageName);
+      }
       await HotelRoomRepository.DeleteHotelRoom(RoomId.Value);
       await JsRuntime.ToastrSuccess("Romm Deleted Successfuly");
       HotelRooms = await HotelRoomRepository.GetAllHotelRoom();
