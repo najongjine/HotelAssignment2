@@ -39,6 +39,7 @@ namespace HotelAssignment2
       services.AddScoped<IHotelRoomRepository, HotelRoomRepository>();
       services.AddScoped<IHotelImageRepository, HotelImagesRepository>();
       services.AddScoped<IFileUpload, FileUpload>();
+      services.AddScoped<IHotelAmenityRepository, HotelAmenityRepository>();
       services.AddRazorPages();
       services.AddServerSideBlazor();
       services.AddSingleton<WeatherForecastService>();

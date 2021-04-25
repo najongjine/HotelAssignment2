@@ -1,0 +1,83 @@
+﻿@page "/amenitylist"
+@using Business.Repository.IRepository
+@inject IHotelAmenityRepository HotelAmenityRepository
+@inject IJSRuntime JsRuntime
+
+<div class="row mt-4">
+  <div class="col-8">
+    <h4 class="card-title text-info">AmenityList</h4>
+  </div>
+  <div class="col-3 offset-1">
+    <NavLink href="amenity/create" class="btn btn-info form-control">Add New Amenity</NavLink>
+  </div>
+</div>
+<div class="row mt-4">
+  <div class="col-12">
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Timming</th>
+          <th>Icon</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (Amenities!=null && Amenities.Any())
+        {
+          foreach (var amenity in Amenities)
+          {
+            <tr>
+              <td>@amenity.Name</td>
+              <td>@amenity.Timming</td>
+              <td><span><i class="@amenity.Icon"></i></span></td>
+              <td>
+                <NavLink href="@($"amenity/edit/{amenity.Id}")" class="btn btn-primary">Edit</NavLink>
+                <button class="btn btn-danger" @onclick="() => HandleDelete(amenity.Id)">Delete</button>
+              </td>
+            </tr>
+          }
+        }
+        else
+        {
+          <tr>
+            <td colspan="5">No records found</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<DeleteConfirmation parentCompIsProcessing="isProcessing" ConfirmationChanged="ConfirmDelete_Click"></DeleteConfirmation>
+
+@code {
+  private IEnumerable<HotelAmenityDTO> Amenities { get; set; } = new List<HotelAmenityDTO>();
+  private int AmenityId { get; set; } = 0;
+  private bool isProcessing { get; set; } = false;
+
+  protected override async Task OnInitializedAsync()
+  {
+    Amenities = await HotelAmenityRepository.GetAllAmenities();
+  }
+
+  private async Task HandleDelete(int amenityId)
+  {
+    AmenityId = amenityId;
+    await JsRuntime.InvokeVoidAsync("ShowDeleteConfirmationModal");
+  }
+
+  public async Task ConfirmDelete_Click(bool isConfirmed)
+  {
+    isProcessing = true;
+    if (isConfirmed) {
+      await HotelAmenityRepository.DeleteHotelAmenity(AmenityId);
+      await JsRuntime.ToastrSuccess("Romm Deleted Successfuly");
+      Amenities = await HotelAmenityRepository.GetAllAmenities();
+    }
+    await JsRuntime.InvokeVoidAsync("HideDeleteConfirmationModal");
+    isProcessing = false;
+  }
+
+}

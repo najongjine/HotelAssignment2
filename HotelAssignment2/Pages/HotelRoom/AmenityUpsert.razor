@@ -1,0 +1,89 @@
+﻿@page "/amenity/create"
+@page "/amenity/edit/{Id:int}"
+@using Business.Repository.IRepository
+
+<!-- 여기 있는것들은 dependency Injection 기능임. Startup 에 service.add 를 먼줘 해줘야함 -->
+@inject IHotelAmenityRepository HotelAmenityRepository
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+<h3>AmenityUpsert</h3>
+
+<div class="row mt-2 mb-5">
+  <h3 class="card-title text-info mb-3 ml-3">@Title Create Hotel Room</h3>
+  <div class="col-md-12">
+    <div class="card-body">
+      <EditForm Model="AmenityDTO" OnValidSubmit="HandleAmenityUpsert">
+        <DataAnnotationsValidator />
+        @*<ValidationSummary/>*@
+        <!-- Model == DTO -->
+        <div class="form-group">
+          <label>Name</label>
+          <InputText @bind-Value="AmenityDTO.Name" class="form-control"></InputText>
+          <ValidationMessage For="()=>AmenityDTO.Name"></ValidationMessage>
+        </div>
+        <div class="form-group">
+          <label>Timing</label>
+          <InputText @bind-Value="AmenityDTO.Timming" class="form-control"></InputText>
+          <ValidationMessage For="()=>AmenityDTO.Timming"></ValidationMessage>
+        </div>
+        <div class="form-group">
+          <label>Icon</label>
+          <InputText @bind-Value="AmenityDTO.Icon" class="form-control"></InputText>
+          <ValidationMessage For="()=>AmenityDTO.Icon"></ValidationMessage>
+        </div>
+
+        <div class="form-group">
+          <button class="btn btn-primary">@Title Amenity </button>
+          <NavLink href="hotel-room" class="btn btn-secondary">Back to Index</NavLink>
+        </div>
+      </EditForm>
+    </div>
+  </div>
+</div>
+
+@code {
+  private HotelAmenityDTO AmenityDTO { get; set; } = new HotelAmenityDTO();
+  private string Title { get; set; } = "Create";
+  [Parameter] public int Id { get; set; } = 0;
+
+  protected override async Task OnInitializedAsync()
+  {
+    if (Id > 0)
+    {
+      Title = "Update";
+      AmenityDTO = await HotelAmenityRepository.GetAmenity(Id);
+    }
+  }
+
+  private async Task HandleAmenityUpsert()
+  {
+    try
+    {
+      var exAmenityDTO = await HotelAmenityRepository.IsNameUnique(AmenityDTO.Name, Id);
+      if (exAmenityDTO != null)
+      {
+        await JsRuntime.ToastrError("Room name alrdy Exists");
+        return;
+      }
+      if (AmenityDTO.Id > 0 && Title == "Update")
+      {
+        var updateAmenityResult = await HotelAmenityRepository.UpdateAmenity(AmenityDTO.Id, AmenityDTO);
+
+        await JsRuntime.ToastrSuccess("Hotel room updated successfully");
+      }
+      else
+      {
+        var createdResult = await HotelAmenityRepository.InsertAmenity(AmenityDTO);
+        await JsRuntime.ToastrSuccess("Hotel room created successfully");
+      }
+    }
+    catch (Exception ex)
+    {
+      // log exception
+    }
+
+    NavigationManager.NavigateTo("amenitylist");
+  }
+
+
+}

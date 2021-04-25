@@ -38,12 +38,45 @@
         </div>
         <div class="form-group">
           <label>Details</label>
-          <InputTextArea @bind-Value="HotelRoomModel.Details" class="form-control"></InputTextArea>
+          @*<InputTextArea @bind-Value="HotelRoomModel.Details" class="form-control"></InputTextArea>*@
+          <BlazoredTextEditor @ref="@QuillHtml">
+            <ToolbarContent>
+              <select class="ql-header">
+                <option selected=""></option>
+                <option value="1"></option>
+                <option value="2"></option>
+                <option value="3"></option>
+                <option value="4"></option>
+                <option value="5"></option>
+              </select>
+              <span class="ql-formats">
+                <button class="ql-bold"></button>
+                <button class="ql-italic"></button>
+                <button class="ql-underline"></button>
+                <button class="ql-strike"></button>
+              </span>
+              <span class="ql-formats">
+                <select class="ql-color"></select>
+                <select class="ql-background"></select>
+              </span>
+              <span class="ql-formats">
+                <button class="ql-list" value="ordered"></button>
+                <button class="ql-list" value="bullet"></button>
+              </span>
+              <span class="ql-formats">
+                <button class="ql-link"></button>
+              </span>
+            </ToolbarContent>
+            <EditorContent>
+
+            </EditorContent>
+          </BlazoredTextEditor>
         </div>
         <div class="form-group">
           <InputFile OnChange="HandleImageUpload" multiple accept="image/*"></InputFile>
           <div class="row">
-            @if (IsImageUploadProcessStarted) { 
+            @if (IsImageUploadProcessStarted)
+            {
               <div class="col-md-12">
                 <span><i class="fade fa-spin fa-spinner"></i>Please wait... Images are uploading</span>
               </div>
@@ -79,6 +112,9 @@
   private string Title { get; set; } = "Create";
   private HotelRoomImageDTO RoomImage { get; set; } = new HotelRoomImageDTO();
   private List<string> DeletedImageNames { get; set; } = new List<string>();
+  private readonly int maxAllowedFiles = 1000;
+
+  public BlazoredTextEditor QuillHtml { get; set; } = new BlazoredTextEditor();
 
   [Parameter] public int? Id { get; set; }
 
@@ -101,6 +137,31 @@
     }
   }
 
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    if (!firstRender)
+    {
+      return;
+    }
+    bool loading = true;
+    while (loading)
+    {
+      try
+      {
+        if (!string.IsNullOrEmpty(HotelRoomModel.Details))
+        {
+          await this.QuillHtml.LoadHTMLContent(HotelRoomModel.Details);
+        }
+        loading=false;
+      }
+      catch (Exception ex)
+      {
+        await Task.Delay(10);
+        loading = true;
+      }
+    }
+  }
+
   private async Task HandleHotelRoomUpsert()
   {
     try
@@ -113,8 +174,9 @@
       }
       if (HotelRoomModel.Id > 0 && Title == "Update")
       {
+        HotelRoomModel.Details = await QuillHtml.GetHTML();
         var updateRoomResult = await HotelRoomRepository.UpdateHotelRoom(HotelRoomModel.Id, HotelRoomModel);
-        if ( (HotelRoomModel.ImageUrls != null && HotelRoomModel.ImageUrls.Any()) || (DeletedImageNames != null && DeletedImageNames.Any()) )
+        if ((HotelRoomModel.ImageUrls != null && HotelRoomModel.ImageUrls.Any()) || (DeletedImageNames != null && DeletedImageNames.Any()))
         {
           if (DeletedImageNames != null && DeletedImageNames.Any())
           {
@@ -131,6 +193,7 @@
       }
       else
       {
+        HotelRoomModel.Details = await QuillHtml.GetHTML();
         var createdResult = await HotelRoomRepository.CreateHotelRoom(HotelRoomModel);
         await AddHotelRoomImage(createdResult);
         await JsRuntime.ToastrSuccess("Hotel room created successfully");
@@ -150,9 +213,9 @@
     try
     {
       var images = new List<string>();
-      if (e.GetMultipleFiles().Count > 0)
+      if (e.GetMultipleFiles(maxAllowedFiles).Count > 0)
       {
-        foreach (var file in e.GetMultipleFiles())
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
         {
           if (file.ContentType.StartsWith("image"))
           {
@@ -199,7 +262,7 @@
     //HotelRoomModel == 프론트에서 조작된 자료를 반영하고 있는놈
     foreach (var imageUrl in HotelRoomModel.ImageUrls)
     {
-      /* null 인 프로퍼티에서 .Where 함수를 실행시키면 exception이 일어남 
+      /* null 인 프로퍼티에서 .Where 함수를 실행시키면 exception이 일어남
        HotelRoomModel.HotelRoomImages 프로퍼티는 이미 DB에 저장된 이미지만을 가지고 있음.
        imageUrl 은 Db 이미지+새로 추가한 이미지
        DB 에 저장된것중에 imageUrl 과 같은게 없으면 새로 추가된 이미지이니, DB에 추가하라 */
@@ -238,4 +301,14 @@
       await JsRuntime.ToastrError(ex.Message);
     }
   }
+
+  public void SetHTML()
+  {
+    if (!string.IsNullOrEmpty(HotelRoomModel.Details))
+    {
+      this.QuillHtml.LoadHTMLContent(HotelRoomModel.Details);
+    }
+    StateHasChanged();
+  }
+
 }

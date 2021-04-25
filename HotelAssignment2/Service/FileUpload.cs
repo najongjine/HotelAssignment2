@@ -37,7 +37,7 @@ namespace HotelAssignment2.Service
 
     public async Task<string> UploadFile(IBrowserFile file)
     {
-      int MAXALLOWEDSIZE=5*1024*1024;
+      int MAXALLOWEDSIZE=500*1024*1024;
       try
       {
         FileInfo fileInfo=new FileInfo(file.Name);

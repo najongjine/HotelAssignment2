@@ -15,11 +15,11 @@
           Cancel
         </button>
 
-        @if (IsProcessStart)
+        @if (parentCompIsProcessing)
         {
           <button type="button" class="btn btn-danger"><i class="fa fa-spin fa-spinner"></i>Processing</button>
         }
-        else
+        else if(parentCompIsProcessing == false)
         {
           <button type="button" class="btn btn-danger" @onclick="()=>OnConfirmationChanged(true)">
             Delete
@@ -32,16 +32,14 @@
 </div>
 
 @code {
-  public bool IsProcessStart { get; set; } = false;
   [Parameter]
   public EventCallback<bool> ConfirmationChanged { get; set; }
 
+  //부모한테 받은 프로퍼티도 실시간으로 상태가 반영됨
+  [Parameter] public bool parentCompIsProcessing { get; set; }
+
   protected async Task OnConfirmationChanged(bool value)
   {
-    if (value)
-    {
-      IsProcessStart = true;
-    }
     await ConfirmationChanged.InvokeAsync(value);
   }
 }
