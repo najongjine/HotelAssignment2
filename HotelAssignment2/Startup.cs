@@ -17,6 +17,7 @@ using Business.Repository.IRepository;
 using Business.Repository;
 using HotelAssignment2.Service.IService;
 using HotelAssignment2.Service;
+using Microsoft.AspNetCore.Identity;
 
 namespace HotelAssignment2
 {
@@ -35,6 +36,9 @@ namespace HotelAssignment2
     {
       // dependency container에 넣는 작업
       services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+      services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders().AddDefaultUI();
+      
       services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
       services.AddScoped<IHotelRoomRepository, HotelRoomRepository>();
       services.AddScoped<IHotelImageRepository, HotelImagesRepository>();
