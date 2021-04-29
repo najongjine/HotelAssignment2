@@ -1,7 +1,7 @@
 ﻿@page "/amenity/create"
 @page "/amenity/edit/{Id:int}"
 @using Business.Repository.IRepository
-
+@attribute [Authorize]
 <!-- 여기 있는것들은 dependency Injection 기능임. Startup 에 service.add 를 먼줘 해줘야함 -->
 @inject IHotelAmenityRepository HotelAmenityRepository
 @inject NavigationManager NavigationManager

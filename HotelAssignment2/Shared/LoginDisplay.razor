@@ -1,6 +1,15 @@
 ﻿<!-- Areas/ 하위에 있는것들을 접근하는 방법 -->
-<a href="Identity/Account/Register">Register</a>
-<a href="Identity/Account/Login">Login</a>
+<AuthorizeView>
+  <Authorized>
+    Hello, @context.User.Identity.Name
+    <a href="Identity/Account/Logout">Logout</a>
+  </Authorized>
+  <NotAuthorized>
+    <a href="Identity/Account/Register">Register</a>
+    <a href="Identity/Account/Login">Login</a>
+  </NotAuthorized>
+</AuthorizeView>
+
 
 @code {
 

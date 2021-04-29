@@ -8,6 +8,7 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
 @inject IFileUpload FileUpload
+@attribute [Authorize]
 
 <div class="row mt-2 mb-5">
   <h3 class="card-title text-info mb-3 ml-3">@Title Create Hotel Room</h3>
@@ -152,7 +153,7 @@
         {
           await this.QuillHtml.LoadHTMLContent(HotelRoomModel.Details);
         }
-        loading=false;
+        loading = false;
       }
       catch (Exception ex)
       {
