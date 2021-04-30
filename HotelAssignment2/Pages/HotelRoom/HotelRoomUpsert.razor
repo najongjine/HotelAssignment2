@@ -8,7 +8,6 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
 @inject IFileUpload FileUpload
-@attribute [Authorize]
 
 <div class="row mt-2 mb-5">
   <h3 class="card-title text-info mb-3 ml-3">@Title Create Hotel Room</h3>
@@ -121,8 +120,21 @@
 
   private bool IsImageUploadProcessStarted { get; set; } = false;
 
+  [CascadingParameter]
+  public Task<AuthenticationState> AuthenticationState { get; set; }
+
   protected override async Task OnInitializedAsync()
   {
+    // AuthenticationState 프로퍼티가 숨어 있어서 꺼내는 작업
+    var authticationState = await AuthenticationState;
+
+    /* 인증되지 않은 사용자면 로그인 페이지로 보내고, 로그인후 return url은 현재 페이지 주소 */
+    if (!authticationState.User.Identity.IsAuthenticated)
+    {
+      var uri = new Uri(NavigationManager.Uri);
+      NavigationManager.NavigateTo($"/identity/account/login?returnUrl={uri.LocalPath}");
+    }
+
     if (Id != null)
     {
       Title = "Update";
