@@ -2,7 +2,7 @@
 @using Business.Repository.IRepository
 @inject IHotelAmenityRepository HotelAmenityRepository
 @inject IJSRuntime JsRuntime
-@attribute [Authorize]
+@attribute [Authorize(Roles = Common.SD.Role_Admin)]
 <div class="row mt-4">
   <div class="col-8">
     <h4 class="card-title text-info">AmenityList</h4>
@@ -23,7 +23,7 @@
         </tr>
       </thead>
       <tbody>
-        @if (Amenities!=null && Amenities.Any())
+        @if (Amenities != null && Amenities.Any())
         {
           foreach (var amenity in Amenities)
           {
@@ -71,7 +71,8 @@
   public async Task ConfirmDelete_Click(bool isConfirmed)
   {
     isProcessing = true;
-    if (isConfirmed) {
+    if (isConfirmed)
+    {
       await HotelAmenityRepository.DeleteHotelAmenity(AmenityId);
       await JsRuntime.ToastrSuccess("Romm Deleted Successfuly");
       Amenities = await HotelAmenityRepository.GetAllAmenities();
