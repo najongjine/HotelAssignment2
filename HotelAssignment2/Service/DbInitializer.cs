@@ -46,7 +46,7 @@ namespace HotelAssignment2.Service
       // 뒤쪽 문자열은 비밀번호임
       _userManager.CreateAsync(new IdentityUser
       {
-        UserName = "najongjine",
+        UserName = "najongjin3@hotmail.com",
         Email = "najongjin3@hotmail.com",
         EmailConfirmed = true
       },"1q2w3e4r%T").GetAwaiter().GetResult();
