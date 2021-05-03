@@ -27,6 +27,7 @@ namespace HotelAssignment2_API.Controllers
       _roleManager = roleManager;
     }
     
+    [HttpPost]
     [AllowAnonymous]
     public async Task<IActionResult> SignUp([FromBody] UserRequestDTO userRequestDTO)
     {
