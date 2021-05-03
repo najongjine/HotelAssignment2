@@ -18,9 +18,9 @@ namespace HotelAssignment2_API.Controllers
   {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<ApplicationUser> _roleManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
-    public AccountController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, RoleManager<ApplicationUser> roleManager)
+    public AccountController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
     {
       _signInManager = signInManager;
       _userManager = userManager;
