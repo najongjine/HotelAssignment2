@@ -33,7 +33,7 @@ namespace HotelAssignment2_API
     {
       // dependency container에 넣는 작업
       services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-      services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+      services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
       services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
       services.AddScoped<IHotelRoomRepository, HotelRoomRepository>();
       services.AddScoped<IHotelImageRepository, HotelImagesRepository>();
