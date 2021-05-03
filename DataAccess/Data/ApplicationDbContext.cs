@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Data
 {
+  // IdentityDbContext<ApplicationUser> == DataAccess.Data 에 정의한 ApplicationUser class를 회원 테이블로 쓰겠다란 뜻.
+  // IdentityDbContext 이렇게 하면 default 로 Microsoft.Identity.EntityFramework 에 있는 IdentityUser 객체가 자동으로 사용됨
   public class ApplicationDbContext :IdentityDbContext<ApplicationUser>
   {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
