@@ -1,5 +1,7 @@
 ﻿using Business.Repository.IRepository;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +25,34 @@ namespace HotelAssignment2_API.Controllers
     {
       var allRooms = await _hotelRoomRepository.GetAllHotelRoom();
       return Ok(allRooms);
+    }
+
+    [HttpGet("{roomId}")]
+    public async Task<IActionResult> GetHotelRoom(int? roomId)
+    {
+      if (roomId == null)
+      {
+        // 여기서 쓴 ErrorModel은 Model project에 정의해 놓은 custom class
+        return BadRequest(new ErrorModel()
+        {
+          Title = "",
+          ErrorMessage = "Invalid Room Id",
+          StatusCode = StatusCodes.Status400BadRequest
+        });
+      }
+
+      var roomDetails = await _hotelRoomRepository.GetHotelRoom(roomId.Value);
+      if (roomDetails == null)
+      {
+        // 여기서 쓴 ErrorModel은 Model project에 정의해 놓은 custom class
+        return BadRequest(new ErrorModel()
+        {
+          Title = "",
+          ErrorMessage = "Invalid Room Id",
+          StatusCode = StatusCodes.Status404NotFound
+        });
+      }
+      return Ok(roomDetails);
     }
   }
 }
