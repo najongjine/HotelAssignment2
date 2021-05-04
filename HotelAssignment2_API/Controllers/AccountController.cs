@@ -60,5 +60,22 @@ namespace HotelAssignment2_API.Controllers
       }
       return StatusCode(201);
     }
+
+    [HttpPost]
+    [AllowAnonymous]
+    public async Task<IActionResult> SignIn([FromBody] AuthenticationDTO authenticationDTO)
+    {
+      var result = await _signInManager.PasswordSignInAsync(authenticationDTO.UserName, authenticationDTO.Password, false, false);
+      if (result.Succeeded)
+      {
+        var user = await _userManager.FindByNameAsync(authenticationDTO.UserName);
+        if (user == null)
+        {
+          return Unauthorized(new AuthenticationresponseDTO { IsAuthSuccessful = false, ErrorMsg = "invalid Authentication" });
+        }
+
+        //everything is valid. need to login the user.
+      }
+    }
   }
 }
