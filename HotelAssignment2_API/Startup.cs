@@ -1,6 +1,7 @@
 using Business.Repository;
 using Business.Repository.IRepository;
 using DataAccess.Data;
+using HotelAssignment2_API.Helper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -34,6 +35,13 @@ namespace HotelAssignment2_API
       // dependency container에 넣는 작업
       services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
       services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
+      //secret key 작업
+      var appSettingSection = Configuration.GetSection("APISettings");
+      /* appsetting.json /  APISettings 밑에 있는 키 네임과 APISettings 객체 안에 있는 동일한 이름의 프로퍼티를 자동으로 맵핑
+       dependency injection 기능도 같이 있다*/
+      services.Configure<APISettings>(appSettingSection);
+
       services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
       services.AddScoped<IHotelRoomRepository, HotelRoomRepository>();
       services.AddScoped<IHotelImageRepository, HotelImagesRepository>();
