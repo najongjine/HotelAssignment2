@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Models;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -85,8 +86,37 @@ namespace HotelAssignment2_API.Controllers
         {
           return Unauthorized(new AuthenticationresponseDTO { IsAuthSuccessful = false, ErrorMsg = "invalid Authentication" });
         }
-
         //everything is valid. need to login the user.
+        var signinCredentials = GetSigninCredentials();
+        var claims = await GetClaims(user);
+        var tokenOptions = new JwtSecurityToken(
+          issuer:_apiSettings.ValidIssuer,
+          audience:_apiSettings.ValidAudience,
+          claims:claims,
+          expires:DateTime.Now.AddDays(30),
+          signingCredentials:signinCredentials
+          );
+        var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+        return Ok(new AuthenticationresponseDTO { 
+          IsAuthSuccessful=true
+          ,Token=token
+          /* userManager 에서 꺼내온 user 객체는 DB에 있는 모든 정보를 다 끌어온 거라서 비밀번호까지 담겨있음. 그래서 DTO로 변환시킴 */
+          ,userDTO=new UserDTO
+          {
+            Name=user.Name
+            ,Id=user.Id
+            ,Email=user.Email
+            ,PhoneNo=user.PhoneNumber
+          }
+        });
+      }
+      else
+      {
+        return Unauthorized(new AuthenticationresponseDTO
+        {
+          IsAuthSuccessful=false
+          ,ErrorMsg="invalid Authentication"
+        });
       }
     }
 
