@@ -2,6 +2,7 @@ using Business.Repository;
 using Business.Repository.IRepository;
 using DataAccess.Data;
 using HotelAssignment2_API.Helper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,10 +13,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace HotelAssignment2_API
@@ -42,12 +45,42 @@ namespace HotelAssignment2_API
        dependency injection 기능도 같이 있다*/
       services.Configure<APISettings>(appSettingSection);
 
+      var apiSettings = appSettingSection.Get<APISettings>();
+      var key = Encoding.ASCII.GetBytes(apiSettings.SecretKey);
+
+      services.AddAuthentication(opt =>
+      {
+        opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+      }).AddJwtBearer(x =>
+      {
+        x.RequireHttpsMetadata = false;
+        x.SaveToken = true;
+        x.TokenValidationParameters = new TokenValidationParameters()
+        {
+          ValidateIssuerSigningKey = true
+          ,
+          IssuerSigningKey = new SymmetricSecurityKey(key)
+          ,
+          ValidateAudience = true
+          ,
+          ValidateIssuer = true
+          ,
+          ValidAudience = apiSettings.ValidAudience
+          ,
+          ValidIssuer = apiSettings.ValidIssuer
+          ,
+          ClockSkew = TimeSpan.Zero
+        };
+      });
+
       services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
       services.AddScoped<IHotelRoomRepository, HotelRoomRepository>();
       services.AddScoped<IHotelImageRepository, HotelImagesRepository>();
       services.AddScoped<IHotelAmenityRepository, HotelAmenityRepository>();
 
-      services.AddRouting(option =>  option.LowercaseUrls = true);
+      services.AddRouting(option => option.LowercaseUrls = true);
       services.AddControllers();
       services.AddSwaggerGen(c =>
       {
