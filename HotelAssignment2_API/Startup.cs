@@ -81,7 +81,8 @@ namespace HotelAssignment2_API
       services.AddScoped<IHotelImageRepository, HotelImagesRepository>();
       services.AddScoped<IHotelAmenityRepository, HotelAmenityRepository>();
 
-      services.AddCors(o=>o.AddPolicy("HiddenVilla",builder=> {
+      services.AddCors(o => o.AddPolicy("HiddenVilla", builder =>
+      {
         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
       }));
       services.AddRouting(option => option.LowercaseUrls = true);
@@ -94,6 +95,28 @@ namespace HotelAssignment2_API
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "HotelAssignment2_API", Version = "v1" });
+
+        /* basic configuration inside the Swagger to add bearer token */
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+          In = ParameterLocation.Header,
+          Description = "Please Bearer and then token in the field",
+          Name = "Authorization",
+          Type = SecuritySchemeType.ApiKey
+        });
+        c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                   {
+                     new OpenApiSecurityScheme
+                     {
+                       Reference = new OpenApiReference
+                       {
+                         Type = ReferenceType.SecurityScheme,
+                         Id = "Bearer"
+                       }
+                      },
+                      new string[] { }
+                    }
+                });
       });
     }
 
