@@ -23,6 +23,7 @@ namespace HotelAssignment2_API.Controllers
     [HttpGet]
     public async Task<IActionResult> GetHotelRooms()
     {
+      // Enitity to DTO convert is alrdy done in repository
       var allRooms = await _hotelRoomRepository.GetAllHotelRoom();
       return Ok(allRooms);
     }
