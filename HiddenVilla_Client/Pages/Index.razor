@@ -1,6 +1,7 @@
 ﻿@page "/"
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject IJSRuntime jsRuntime
+@inject NavigationManager NavigationManager
 
 <div class="row p-0 m-0">
   <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
@@ -67,7 +68,8 @@
     try
     {
       HomeModel.EndDate = HomeModel.StartDate.AddDays(HomeModel.NoOfNights);
-      await localStorage.SetItemAsync("InitialRoomBookingInfo",HomeModel);
+      await localStorage.SetItemAsync(SD.Local_InitialBooking,HomeModel);
+      NavigationManager.NavigateTo("hotel/rooms", true);
     }
     catch (Exception e)
     {
