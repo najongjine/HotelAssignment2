@@ -1,6 +1,30 @@
 ﻿@page "/hotel/rooms"
+@inject ILocalStorageService localStorage
+@inject IJSRuntime jsRuntime
 <h3>HotelRooms</h3>
 
 @code {
+  private HomeVM HomeModel { get; set; } = new HomeVM();
+  public IEnumerable<HotelRoomDTO> Rooms { get; set; } = new List<HotelRoomDTO>();
 
+  protected override async Task OnInitializedAsync()
+  {
+    try
+    {
+      //localStorage 에서 key 값이 SD.Local_InitialBooking 인 데이터를 찾아서 HomeVM에 담아라
+      if (await localStorage.GetItemAsync<HomeVM>(SD.Local_InitialBooking) != null)
+      {
+        HomeModel = await localStorage.GetItemAsync<HomeVM>(SD.Local_InitialBooking);
+      }
+      else
+      {
+        HomeModel.NoOfNights = 1;
+      }
+      await LoadRooms();
+    }
+    catch (Exception ex)
+    {
+      jsRuntime.ToastrError(ex.Message);
+    }
+  }
 }
