@@ -29,7 +29,7 @@ namespace HiddenVilla_Client.Service
 
       // Enitity to DTO convert is alrdy done in repository
       var rooms = JsonConvert.DeserializeObject<IEnumerable<HotelRoomDTO>>(content);
-      throw new NotImplementedException();
+      return rooms;
     }
   }
 }

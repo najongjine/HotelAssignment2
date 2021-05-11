@@ -18,8 +18,8 @@ namespace HiddenVilla_Client
       var builder = WebAssemblyHostBuilder.CreateDefault(args);
       builder.RootComponents.Add<App>("#app");
 
-      // adding HttpClient injection
-      builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+      // adding HttpClient injection. base url을 HotelAssgienment2_API 의 url 주소로 설정했음
+      builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration.GetValue<string>("BaseApiUrl")) });
       builder.Services.AddBlazoredLocalStorage();
       await builder.Build().RunAsync();
     }
