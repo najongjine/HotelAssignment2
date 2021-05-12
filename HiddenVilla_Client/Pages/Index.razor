@@ -60,8 +60,8 @@
 
   </div>
 </EditForm>
-<div>startdate: @HomeModel.StartDate</div>
-<div>enddate: @HomeModel.EndDate</div>
+<div>startdate: @HomeModel.StartDate.ToString("MM'/'dd'/'yyyy")</div>
+<div>enddate: @HomeModel.EndDate.ToString("MM'/'dd'/'yyyy")</div>
 <div>no of nights: @HomeModel.NoOfNights</div>
 @code{
   public HomeVM HomeModel { get; set; } = new HomeVM();
