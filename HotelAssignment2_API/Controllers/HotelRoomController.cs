@@ -31,6 +31,7 @@ namespace HotelAssignment2_API.Controllers
           ErrorMessage="All Parameters need to be supplied"
         });
       }
+      /*
       if (!DateTime.TryParseExact(checkInDate,"MM/dd/yyyy",CultureInfo.InvariantCulture,DateTimeStyles.None,out var dtCheckInDate) )
       {
         return BadRequest(new ErrorModel()
@@ -39,7 +40,7 @@ namespace HotelAssignment2_API.Controllers
           ErrorMessage = "invalid checkin date format. valid format will be MM/dd/yyyy"
         });
       }
-      if (!DateTime.TryParseExact(checkOutDate, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dtCheckInDate))
+      if (!DateTime.TryParseExact(checkOutDate, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dtCheckOutDate))
       {
         return BadRequest(new ErrorModel()
         {
@@ -47,7 +48,7 @@ namespace HotelAssignment2_API.Controllers
           ErrorMessage = "invalid checkout date format. valid format will be MM/dd/yyyy"
         });
       }
-
+      */
       // Enitity to DTO convert is alrdy done in repository
       var allRooms = await _hotelRoomRepository.GetAllHotelRoom(checkInDate,checkOutDate);
       return Ok(allRooms);
@@ -82,7 +83,7 @@ namespace HotelAssignment2_API.Controllers
           ErrorMessage = "invalid checkin date format. valid format will be MM/dd/yyyy"
         });
       }
-      if (!DateTime.TryParseExact(checkOutDate, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dtCheckInDate))
+      if (!DateTime.TryParseExact(checkOutDate, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dtCheckOutDate))
       {
         return BadRequest(new ErrorModel()
         {

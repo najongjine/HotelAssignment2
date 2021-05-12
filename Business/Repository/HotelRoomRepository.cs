@@ -50,7 +50,7 @@ namespace Business.Repository
       return 0;
     }
 
-    public async Task<IEnumerable<HotelRoomDTO>> GetAllHotelRoom(string checkInDate = null, string checkOutDate = null)
+    public async Task<IEnumerable<HotelRoomDTO>> GetAllHotelRoom(string checkInDate, string checkOutDate)
     {
       try
       {
@@ -63,7 +63,7 @@ namespace Business.Repository
       }
     }
 
-    public async Task<HotelRoomDTO> GetHotelRoom(int roomId, string checkInDate = null, string checkOutDate = null)
+    public async Task<HotelRoomDTO> GetHotelRoom(int roomId, string checkInDate , string checkOutDate )
     {
       try
       {

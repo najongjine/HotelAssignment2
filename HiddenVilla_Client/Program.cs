@@ -1,4 +1,6 @@
 using Blazored.LocalStorage;
+using HiddenVilla_Client.Service;
+using HiddenVilla_Client.Service.IService;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +23,7 @@ namespace HiddenVilla_Client
       // adding HttpClient injection. base url을 HotelAssgienment2_API 의 url 주소로 설정했음
       builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration.GetValue<string>("BaseApiUrl")) });
       builder.Services.AddBlazoredLocalStorage();
+      builder.Services.AddScoped<IHotelRoomService, HotelRoomService>();
       await builder.Build().RunAsync();
     }
   }

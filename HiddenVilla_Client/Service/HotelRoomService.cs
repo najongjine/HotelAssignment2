@@ -24,7 +24,7 @@ namespace HiddenVilla_Client.Service
 
     public async Task<IEnumerable<HotelRoomDTO>> GetHotelRooms(string checkInDate, string checkOutDate)
     {
-      var response = await _client.GetAsync($"api/hotelroom?checkInDate={checkInDate}&checkOutDate={checkInDate}");
+      var response = await _client.GetAsync($"api/hotelroom?checkInDate={checkInDate}&checkOutDate={checkOutDate}");
       var content = await response.Content.ReadAsStringAsync();
 
       // Enitity to DTO convert is alrdy done in repository
