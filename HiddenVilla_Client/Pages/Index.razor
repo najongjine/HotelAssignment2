@@ -2,6 +2,7 @@
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject IJSRuntime jsRuntime
 @inject NavigationManager navigationManager
+@inject IAmenityService amenityService
 
 <div class="row p-0 m-0">
   <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
@@ -65,6 +66,7 @@
 <div>no of nights: @HomeModel.NoOfNights</div>
 @code{
   public HomeVM HomeModel { get; set; } = new HomeVM();
+  public IEnumerable<HotelAmenityDTO> Amenities { get; set; } = new List<HotelAmenityDTO>();
   private async Task SaveInitialData()
   {
     try
@@ -72,6 +74,8 @@
       HomeModel.EndDate = HomeModel.StartDate.AddDays(HomeModel.NoOfNights);
       await localStorage.SetItemAsync(SD.Local_InitialBooking, HomeModel);
       navigationManager.NavigateTo("hotel/rooms", true);
+
+      Amenities = await amenityService.GetAllAmenities();
     }
     catch (Exception e)
     {
