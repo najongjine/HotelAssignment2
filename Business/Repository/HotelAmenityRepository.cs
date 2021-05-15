@@ -105,12 +105,11 @@ namespace Business.Repository
         if (Id == hotelAmenityDTO.Id)
         {
           var exAmenity = await _db.HotelAmenities.FindAsync(Id);
-          var convertedUpdatedAmenity = _mapper.Map<HotelAmenityDTO, HotelAmenity>(hotelAmenityDTO, exAmenity);
-          convertedUpdatedAmenity.CreatedBy = "";
-          convertedUpdatedAmenity.UpdatedDate = DateTime.UtcNow;
-          var updatedAmenity = await _db.HotelAmenities.AddAsync(convertedUpdatedAmenity);
+          exAmenity = _mapper.Map<HotelAmenityDTO, HotelAmenity>(hotelAmenityDTO, exAmenity);
+          exAmenity.CreatedBy = "";
+          exAmenity.UpdatedDate = DateTime.UtcNow;
           await _db.SaveChangesAsync();
-          return _mapper.Map<HotelAmenity, HotelAmenityDTO>(updatedAmenity.Entity);
+          return _mapper.Map<HotelAmenity, HotelAmenityDTO>(exAmenity);
         }
         else
         {

@@ -18,7 +18,7 @@
         <!-- Model == DTO -->
         <div class="form-group">
           <label>Name</label>
-          <InputText @bind-Value="AmenityDTO.Name" class="form-control"></InputText>
+          <InputText @bind-Value="AmenityDTO.Name" maxlength="50" class="form-control"></InputText>
           <ValidationMessage For="()=>AmenityDTO.Name"></ValidationMessage>
         </div>
         <div class="form-group">
@@ -33,9 +33,46 @@
         </div>
 
         <div class="form-group">
+          <label>Description</label>
+          <BlazoredTextEditor @ref="@QuillHtml">
+            <ToolbarContent>
+              <select class="ql-header">
+                <option selected=""></option>
+                <option value="1"></option>
+                <option value="2"></option>
+                <option value="3"></option>
+                <option value="4"></option>
+                <option value="5"></option>
+              </select>
+              <span class="ql-formats">
+                <button class="ql-bold"></button>
+                <button class="ql-italic"></button>
+                <button class="ql-underline"></button>
+                <button class="ql-strike"></button>
+              </span>
+              <span class="ql-formats">
+                <select class="ql-color"></select>
+                <select class="ql-background"></select>
+              </span>
+              <span class="ql-formats">
+                <button class="ql-list" value="ordered"></button>
+                <button class="ql-list" value="bullet"></button>
+              </span>
+              <span class="ql-formats">
+                <button class="ql-link"></button>
+              </span>
+            </ToolbarContent>
+            <EditorContent>
+
+            </EditorContent>
+          </BlazoredTextEditor>
+        </div>
+
+        <div class="form-group">
           <button class="btn btn-primary">@Title Amenity </button>
           <NavLink href="hotel-room" class="btn btn-secondary">Back to Index</NavLink>
         </div>
+
       </EditForm>
     </div>
   </div>
@@ -46,12 +83,39 @@
   private string Title { get; set; } = "Create";
   [Parameter] public int Id { get; set; } = 0;
 
+  public BlazoredTextEditor QuillHtml { get; set; } = new BlazoredTextEditor();
+
   protected override async Task OnInitializedAsync()
   {
     if (Id > 0)
     {
       Title = "Update";
       AmenityDTO = await HotelAmenityRepository.GetAmenity(Id);
+    }
+  }
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    if (!firstRender)
+    {
+      return;
+    }
+    bool loading = true;
+    while (loading)
+    {
+      try
+      {
+        if (!string.IsNullOrEmpty(AmenityDTO.Description))
+        {
+          await this.QuillHtml.LoadHTMLContent(AmenityDTO.Description);
+        }
+        loading = false;
+      }
+      catch (Exception ex)
+      {
+        await Task.Delay(10);
+        loading = true;
+      }
     }
   }
 
@@ -65,8 +129,10 @@
         await JsRuntime.ToastrError("Room name alrdy Exists");
         return;
       }
+      AmenityDTO.Description = await QuillHtml.GetHTML();
       if (AmenityDTO.Id > 0 && Title == "Update")
       {
+
         var updateAmenityResult = await HotelAmenityRepository.UpdateAmenity(AmenityDTO.Id, AmenityDTO);
 
         await JsRuntime.ToastrSuccess("Hotel room updated successfully");
@@ -85,5 +151,13 @@
     NavigationManager.NavigateTo("amenitylist");
   }
 
+  public void SetHTML()
+  {
+    if (!string.IsNullOrEmpty(AmenityDTO.Description))
+    {
+      this.QuillHtml.LoadHTMLContent(AmenityDTO.Description);
+    }
+    StateHasChanged();
+  }
 
 }

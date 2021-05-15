@@ -19,6 +19,7 @@
           <th>Name</th>
           <th>Timming</th>
           <th>Icon</th>
+          <th>Description</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -27,15 +28,16 @@
         {
           foreach (var amenity in Amenities)
           {
-            <tr>
-              <td>@amenity.Name</td>
-              <td>@amenity.Timming</td>
-              <td><span><i class="@amenity.Icon"></i></span></td>
-              <td>
-                <NavLink href="@($"amenity/edit/{amenity.Id}")" class="btn btn-primary">Edit</NavLink>
-                <button class="btn btn-danger" @onclick="() => HandleDelete(amenity.Id)">Delete</button>
-              </td>
-            </tr>
+        <tr>
+          <td>@amenity.Name</td>
+          <td>@amenity.Timming</td>
+          <td><span><i class="@amenity.Icon"></i></span></td>
+          <td>@((MarkupString)amenity.Description)</td>
+          <td>
+            <NavLink href="@($"amenity/edit/{amenity.Id}")" class="btn btn-primary">Edit</NavLink>
+            <button class="btn btn-danger" @onclick="() => HandleDelete(amenity.Id)">Delete</button>
+          </td>
+        </tr>
           }
         }
         else
