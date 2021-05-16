@@ -61,12 +61,45 @@
 
   </div>
 </EditForm>
+
+<hr />
+<div class="container pt-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2 text-center">
+      <h2 class="text-warning">Explore our Amenities</h2>
+      <p class="lead">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+    </div>
+  </div>
+  <div class="row">
+    @foreach (var amenity in Amenities)
+    {
+      <div class="col-md-4 col-6 p-4">
+        <div style="border:1px solid #d5d5d5; border-radius:20px;">
+          <div class="row col-4 offset-4 p-4">
+            <i class="@amenity.Icon fa-4x"></i>
+          </div>
+          <div class="text-center justify-content-center">
+            <h5 class="text-warning">@amenity.Name</h5>
+            <p>@((MarkupString)amenity.Description)</p>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
 <div>startdate: @HomeModel.StartDate.ToString("MM'/'dd'/'yyyy")</div>
 <div>enddate: @HomeModel.EndDate.ToString("MM'/'dd'/'yyyy")</div>
 <div>no of nights: @HomeModel.NoOfNights</div>
 @code{
   public HomeVM HomeModel { get; set; } = new HomeVM();
   public IEnumerable<HotelAmenityDTO> Amenities { get; set; } = new List<HotelAmenityDTO>();
+
+  protected override async Task OnInitializedAsync()
+  {
+    Amenities = await amenityService.GetAllAmenities();
+  }
+
   private async Task SaveInitialData()
   {
     try
@@ -74,8 +107,6 @@
       HomeModel.EndDate = HomeModel.StartDate.AddDays(HomeModel.NoOfNights);
       await localStorage.SetItemAsync(SD.Local_InitialBooking, HomeModel);
       navigationManager.NavigateTo("hotel/rooms", true);
-
-      Amenities = await amenityService.GetAllAmenities();
     }
     catch (Exception e)
     {
