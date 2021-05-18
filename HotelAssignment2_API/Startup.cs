@@ -80,6 +80,7 @@ namespace HotelAssignment2_API
       services.AddScoped<IHotelRoomRepository, HotelRoomRepository>();
       services.AddScoped<IHotelImageRepository, HotelImagesRepository>();
       services.AddScoped<IHotelAmenityRepository, HotelAmenityRepository>();
+      services.AddScoped<IRoomOrderDetailsRepository, RoomOrderDetailsRepository>();
 
       services.AddCors(o => o.AddPolicy("HiddenVilla", builder =>
       {
