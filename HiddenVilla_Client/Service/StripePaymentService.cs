@@ -41,7 +41,7 @@ namespace HiddenVilla_Client.Service
       }
       catch(Exception e)
       {
-
+        throw new Exception(e.Message);
       }
     }
   }
