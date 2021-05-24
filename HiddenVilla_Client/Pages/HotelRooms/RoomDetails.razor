@@ -2,6 +2,8 @@
 @inject IJSRuntime jsRuntime
 @inject ILocalStorageService localStorageService
 @inject IHotelRoomService hotelRoomService
+@inject IStripePaymentService stripePaymentService
+@inject IRoomOrderDetailsService roomOrderDetailsService
 <!--HotelBooking not null and OrderDetails not null and HotelRoomDTO not null and  Id == null
   데이터가 fetch 되기 전에 화면이 그려지면 에러가 발생하기 때문에 추가해준 코드
   -->
@@ -180,6 +182,26 @@ else
     if (!await HandleValidation())
     {
       return;
+    }
+    try
+    {
+      var paymentDTO = new StripePaymentDTO()
+      {
+        Amount = Convert.ToInt32(HotelBooking.OrderDetails.HotelRoomDTO.TotalAmount * 100)//convert to cents
+        ,ProductName=HotelBooking.OrderDetails.HotelRoomDTO.Name
+        ,ReturnUrl="/hotel/room-details/"+Id
+      };
+      var result = await stripePaymentService.CheckOut(paymentDTO);
+      HotelBooking.OrderDetails.StripeSessionId = result.Data.ToString();
+      HotelBooking.OrderDetails.RoomId = HotelBooking.OrderDetails.HotelRoomDTO.Id;
+      HotelBooking.OrderDetails.TotalCost = HotelBooking.OrderDetails.HotelRoomDTO.TotalAmount;
+
+      var roomOrderDetailsSaved = await roomOrderDetailsService.SaveRoomOrderDetails(HotelBooking.OrderDetails);
+      await localStorageService.SetItemAsync(SD.Local_RoomOrderDetails,roomOrderDetailsSaved);
+      await jsRuntime.InvokeVoidAsync("redirectToCheckout",result.Data.ToString());
+    }catch(Exception e)
+    {
+      await jsRuntime.ToastrError(e.Message);
     }
   }
   private async Task<bool> HandleValidation()
