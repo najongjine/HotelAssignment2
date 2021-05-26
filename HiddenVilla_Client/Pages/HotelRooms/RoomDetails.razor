@@ -191,11 +191,13 @@ else
         ,ProductName=HotelBooking.OrderDetails.HotelRoomDTO.Name
         ,ReturnUrl="/hotel/room-details/"+Id
       };
+      // 결제하고 결제ID return 받음
       var result = await stripePaymentService.CheckOut(paymentDTO);
       HotelBooking.OrderDetails.StripeSessionId = result.Data.ToString();
       HotelBooking.OrderDetails.RoomId = HotelBooking.OrderDetails.HotelRoomDTO.Id;
       HotelBooking.OrderDetails.TotalCost = HotelBooking.OrderDetails.HotelRoomDTO.TotalAmount;
 
+      //결제id, room 정보 저장, 저장된 room 정보 리턴받음
       var roomOrderDetailsSaved = await roomOrderDetailsService.SaveRoomOrderDetails(HotelBooking.OrderDetails);
       await localStorageService.SetItemAsync(SD.Local_RoomOrderDetails,roomOrderDetailsSaved);
       await jsRuntime.InvokeVoidAsync("redirectToCheckout",result.Data.ToString());

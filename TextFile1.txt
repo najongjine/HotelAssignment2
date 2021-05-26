@@ -1,0 +1,6 @@
+client service = api 요청을 담당
+Client ViewModel = local storage 자료구조를 담당
+
+repository = DTO to Entity, Entity to DTO, 데이터 정제, CRUD, 부가 코드들 담당
+
+API = repository 호출 담당

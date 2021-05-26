@@ -65,5 +65,6 @@ namespace HotelAssignment2_API.Controllers
         return BadRequest(new ErrorModel() { ErrorMessage=e.Message});
       }
     }
+
   }
 }
