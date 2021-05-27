@@ -113,7 +113,14 @@ else
             </select>
           </div>
           <div class="form-group">
-            <button type="submit" class="btn btn-success form-control">Checkout Now</button>
+            @if (HotelBooking.OrderDetails.HotelRoomDTO.IsBooked)
+            {
+              <input class="btn btn-secondary form-control" value="Sold Out" />
+            }
+            else
+            {
+              <button type="submit" class="btn btn-success form-control">Checkout Now</button>
+            }
           </div>
         </EditForm>
       </div>
@@ -188,8 +195,10 @@ else
       var paymentDTO = new StripePaymentDTO()
       {
         Amount = Convert.ToInt32(HotelBooking.OrderDetails.HotelRoomDTO.TotalAmount * 100)//convert to cents
-        ,ProductName=HotelBooking.OrderDetails.HotelRoomDTO.Name
-        ,ReturnUrl="/hotel/room-details/"+Id
+        ,
+        ProductName = HotelBooking.OrderDetails.HotelRoomDTO.Name
+        ,
+        ReturnUrl = "/hotel/room-details/" + Id
       };
       // 결제하고 결제ID return 받음
       var result = await stripePaymentService.CheckOut(paymentDTO);
@@ -199,9 +208,10 @@ else
 
       //결제id, room 정보 저장, 저장된 room 정보 리턴받음
       var roomOrderDetailsSaved = await roomOrderDetailsService.SaveRoomOrderDetails(HotelBooking.OrderDetails);
-      await localStorageService.SetItemAsync(SD.Local_RoomOrderDetails,roomOrderDetailsSaved);
-      await jsRuntime.InvokeVoidAsync("redirectToCheckout",result.Data.ToString());
-    }catch(Exception e)
+      await localStorageService.SetItemAsync(SD.Local_RoomOrderDetails, roomOrderDetailsSaved);
+      await jsRuntime.InvokeVoidAsync("redirectToCheckout", result.Data.ToString());
+    }
+    catch (Exception e)
     {
       await jsRuntime.ToastrError(e.Message);
     }

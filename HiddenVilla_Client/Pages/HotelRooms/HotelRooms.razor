@@ -44,7 +44,7 @@
             }
             else
             {
-              <input type="submit" value="Update" class="btn btn-success btn-block form-control"/>
+              <input type="submit" value="Update" class="btn btn-success btn-block form-control" />
             }
           </div>
         </div>
@@ -88,9 +88,14 @@
             <div class="col-12 col-lg-4">
               <div class="row pb-3 pt-2">
                 <div class="col-12 col-lg-11 offset-lg-1">
-
-                  <a href="@($"hotel/room-details/{room.Id}")" class="btn btn-success btn-block">Book</a>
-
+                  @if (room.IsBooked)
+                  {
+                    <button disabled class="btn btn-secondary btn-block">Sold Out</button>
+                  }
+                  else
+                  {
+                    <a href="@($"hotel/room-details/{room.Id}")" class="btn btn-success btn-block">Book</a>
+                  }
                 </div>
               </div>
               <div class="row ">
@@ -178,7 +183,7 @@ else
       await LoadRooms();
       IsProcessing = false;
     }
-    catch(Exception e)
+    catch (Exception e)
     {
       Console.WriteLine(e.Message);
     }
