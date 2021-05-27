@@ -42,7 +42,7 @@ namespace Business.Repository
       if (roomDetails != null)
       {
         var allImages = await _db.HotelRoomsImages.Where(x => x.RoomId == roomId).ToListAsync();
-        
+
         _db.RemoveRange(allImages);
         _db.HotelRooms.Remove(roomDetails);
         return await _db.SaveChangesAsync();
@@ -55,6 +55,15 @@ namespace Business.Repository
       try
       {
         IEnumerable<HotelRoomDTO> hotelRoomDTOs = _mapper.Map<IEnumerable<HotelRoom>, IEnumerable<HotelRoomDTO>>(_db.HotelRooms.Include(x => x.HotelRoomImages));
+
+        if (!string.IsNullOrWhiteSpace(checkInDate) && !string.IsNullOrWhiteSpace(checkOutDate))
+        {
+          foreach(var hotelRoom in hotelRoomDTOs)
+          {
+            hotelRoom.IsBooked = await IsRoomBooked(hotelRoom.Id, checkInDate, checkOutDate);
+          }
+        }
+
         return hotelRoomDTOs;
       }
       catch (Exception ex)
@@ -63,13 +72,19 @@ namespace Business.Repository
       }
     }
 
-    public async Task<HotelRoomDTO> GetHotelRoom(int roomId, string checkInDate , string checkOutDate )
+    public async Task<HotelRoomDTO> GetHotelRoom(int roomId, string checkInDate, string checkOutDate)
     {
       try
       {
         /* FirstOrDefaultAsync 와 FindAsync 은 기능적으론 같은데, FirstOrDefaultAsync 는 ( ) 안에 && 로 조건을 더 넣을수 있다 
           .Include(x=>x.HotelRoomImages)  FK 설정된 entity 에 include 함수 써주면 자동으로 populate 해줌 */
-        HotelRoomDTO hotelRoom = _mapper.Map<HotelRoom, HotelRoomDTO>(await _db.HotelRooms.Include(x=>x.HotelRoomImages).FirstOrDefaultAsync(x => x.Id == roomId));
+        HotelRoomDTO hotelRoom = _mapper.Map<HotelRoom, HotelRoomDTO>(await _db.HotelRooms.Include(x => x.HotelRoomImages).FirstOrDefaultAsync(x => x.Id == roomId));
+        
+        if(!string.IsNullOrWhiteSpace(checkInDate) && !string.IsNullOrWhiteSpace(checkOutDate))
+        {
+          hotelRoom.IsBooked = await IsRoomBooked(roomId, checkInDate, checkOutDate);
+        }
+        
         return hotelRoom;
       }
       catch (Exception ex)
@@ -78,6 +93,35 @@ namespace Business.Repository
       }
     }
 
+    public async Task<bool> IsRoomBooked(int RoomId, string checkInDateStr, string checkOutDateStr)
+    {
+      try
+      {
+        if (!string.IsNullOrWhiteSpace(checkOutDateStr) && !string.IsNullOrWhiteSpace(checkInDateStr))
+        {
+          DateTime checkInDate = DateTime.ParseExact(checkInDateStr, "MM'/'dd'/'yyyy", null);
+          DateTime checkOutDate = DateTime.ParseExact(checkOutDateStr, "MM'/'dd'/'yyyy", null);
+
+          var existingBooking = await _db.RoomOrderDetails.Where(x => x.RoomId == RoomId && x.IsPaymentSuccessful &&
+          //check if checkin date that user wants doesnot fall in btw any dates for room that is booked
+          ((checkInDate < x.CheckOutDate && checkInDate.Date >= x.CheckInDate)
+          //check if checkout date that user wants doesnot fall in btw any dates for room that is booked
+          || (checkOutDate.Date > x.CheckInDate.Date && checkInDate.Date <= x.CheckInDate.Date)
+          )).FirstOrDefaultAsync();
+
+          if (existingBooking != null)
+          {
+            return true;
+          }
+          return false;
+        }
+        return true;
+      }
+      catch (Exception e)
+      {
+        throw new Exception(e.Message);
+      }
+    }
     public async Task<HotelRoomDTO> IsRoomUnique(string name, int roomId = 0)
     {
       try
@@ -89,7 +133,7 @@ namespace Business.Repository
         }
         else
         {
-          HotelRoomDTO hotelRoom = _mapper.Map<HotelRoom, HotelRoomDTO>(await _db.HotelRooms.FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower() && x.Id!=roomId));
+          HotelRoomDTO hotelRoom = _mapper.Map<HotelRoom, HotelRoomDTO>(await _db.HotelRooms.FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower() && x.Id != roomId));
           return hotelRoom;
         }
       }
