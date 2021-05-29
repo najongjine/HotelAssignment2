@@ -4,6 +4,14 @@
 @inject NavigationManager navigationManager
 @inject IAmenityService amenityService
 
+<AuthorizeView>
+  <Authorized>
+    <p>welcome, @context.User.Identity.Name</p>
+  </Authorized>
+  <NotAuthorized>
+    <p>Not logged in!</p>
+  </NotAuthorized>
+</AuthorizeView>
 <div class="row p-0 m-0">
   <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
     <ol class="carousel-indicators">
