@@ -37,5 +37,6 @@ namespace HiddenVilla_Client.Pages.Authentication
         ShowRegistrationErrors = true;
       }
     }
+
   }
 }
