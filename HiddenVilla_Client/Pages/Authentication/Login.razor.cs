@@ -26,14 +26,18 @@ namespace HiddenVilla_Client.Pages.Authentication
     {
       ShowAuthenticationErrors = false;
       IsProcessing = true;
+
+      //service 단계에서 이미 localstorage에 토큰과 userdetails를 저장함
       var result = await authenticationService.SignIn(UserForAuthentication);
       if (result.IsAuthSuccessful)
       {
         IsProcessing = false;
+
+        //System.Uri  returnUrl 뽑을때 항상 null임...
         var absouleUri = new Uri(navigationManager.Uri);
         var queryParam = HttpUtility.ParseQueryString(absouleUri.Query);
         ReturnUrl = queryParam["returnUrl"];
-        if (string.IsNullOrWhiteSpace(ReturnUrl))
+        if(string.IsNullOrWhiteSpace(ReturnUrl))
         {
           navigationManager.NavigateTo("/");
         }
@@ -41,7 +45,6 @@ namespace HiddenVilla_Client.Pages.Authentication
         {
           navigationManager.NavigateTo("/"+ReturnUrl);
         }
-        navigationManager.NavigateTo("/login");
       }
       else
       {
