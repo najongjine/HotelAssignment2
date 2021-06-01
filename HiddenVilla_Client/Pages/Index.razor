@@ -6,6 +6,7 @@
 
 <AuthorizeView>
   <Authorized>
+    <!-- context.User.Identity.Name == AspNetUsers.UserName -->
     <p>welcome, @context.User.Identity.Name</p>
   </Authorized>
   <NotAuthorized>
