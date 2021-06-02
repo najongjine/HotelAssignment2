@@ -41,14 +41,16 @@ namespace HotelAssignment2_API
       services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
       services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
-      //secret key 작업
+      //클라에서 API 요청 보낼시, 보안에서 체크할 옵션값을 json 파일에서 읽어오는 코드. secret key 작업
       var appSettingSection = Configuration.GetSection("APISettings");
       /* appsetting.json /  APISettings 밑에 있는 키 네임과 APISettings 객체 안에 있는 동일한 이름의 프로퍼티를 자동으로 맵핑
        dependency injection 기능도 같이 있다*/
       services.Configure<APISettings>(appSettingSection);
 
+      services.Configure<MailJetSettings>(Configuration.GetSection("MailJetSettings"));
+
       var apiSettings = appSettingSection.Get<APISettings>();
-      var key = Encoding.ASCII.GetBytes(apiSettings.SecretKey);
+      var key = Encoding.UTF8.GetBytes(apiSettings.SecretKey);
 
       services.AddAuthentication(opt =>
       {

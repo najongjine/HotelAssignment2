@@ -4,3 +4,6 @@ Client ViewModel = local storage 자료구조를 담당
 repository = DTO to Entity, Entity to DTO, 데이터 정제, CRUD, 부가 코드들 담당
 
 API = repository 호출 담당
+
+
+appsetting.json 프레임 워크 설정에 필요한 환경변수 설정
