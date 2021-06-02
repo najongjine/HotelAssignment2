@@ -22,7 +22,6 @@ namespace HiddenVilla_Client.Service
     {
       try
       {
-        details.UserId = "testUser";
         var content = JsonConvert.SerializeObject(details);
         var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
         var response = await _client.PostAsync("api/roomorder/paymentsuccessful", bodyContent);
@@ -51,7 +50,6 @@ namespace HiddenVilla_Client.Service
     {
       try
       {
-        details.UserId = "testUser";
         var content = JsonConvert.SerializeObject(details);
         var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
         var response = await _client.PostAsync("api/roomorder/Create", bodyContent);

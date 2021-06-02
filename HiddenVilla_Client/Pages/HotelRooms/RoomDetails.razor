@@ -4,6 +4,7 @@
 @inject IHotelRoomService hotelRoomService
 @inject IStripePaymentService stripePaymentService
 @inject IRoomOrderDetailsService roomOrderDetailsService
+@attribute [Authorize(Roles=SD.Role_Customer)]
 <!--HotelBooking not null and OrderDetails not null and HotelRoomDTO not null and  Id == null
   데이터가 fetch 되기 전에 화면이 그려지면 에러가 발생하기 때문에 추가해준 코드
   -->
@@ -140,7 +141,7 @@ else
   {
     try
     {
-      await Task.Delay(5000);
+      //await Task.Delay(5000);
       HotelBooking.OrderDetails = new RoomOrderDetailsDTO();
       if (Id != null)
       {
@@ -165,6 +166,17 @@ else
           HotelBooking.OrderDetails.HotelRoomDTO.TotalDays = 1;
           HotelBooking.OrderDetails.HotelRoomDTO.TotalAmount = HotelBooking.OrderDetails.HotelRoomDTO.RegularRate;
         }
+      }
+
+      //if userDetail in localstroage is not null,  then get user's info from there (in localstorage, token and useinfo is saved)
+      if(await localStorageService.GetItemAsync<UserDTO>(SD.Local_UserDetails)!=null)
+      {
+        var userInfo = await localStorageService.GetItemAsync<UserDTO>(SD.Local_UserDetails);
+        HotelBooking.OrderDetails.UserId = userInfo.Id;
+        HotelBooking.OrderDetails.Name = userInfo.Name;
+        HotelBooking.OrderDetails.Email = userInfo.Email;
+        HotelBooking.OrderDetails.Phone = userInfo.PhoneNo;
+
       }
     }
     catch (Exception e)

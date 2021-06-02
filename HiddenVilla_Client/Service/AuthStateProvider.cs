@@ -22,6 +22,8 @@ namespace HiddenVilla_Client.Service
       _httpClient = httpClient;
       _localStorage = localStorage;
     }
+
+    //AuthenticationState 에 의해 자동으로 사용되는 함수
     public async override Task<AuthenticationState> GetAuthenticationStateAsync()
     {
       var token = await _localStorage.GetItemAsync<string>(SD.Local_Token);
