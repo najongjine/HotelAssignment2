@@ -1,5 +1,6 @@
 ﻿@page "/counter"
-
+@inject ProtectedLocalStorage localStorage 
+@inject ProtectedSessionStorage sessionStorage
 <h1>Counter</h1>
 
 <p>Current count: @currentCount</p>
@@ -7,10 +8,16 @@
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
 @code {
-    private int currentCount = 0;
+  private int currentCount = 0;
 
-    private void IncrementCount()
-    {
-        currentCount++;
-    }
+  private async Task IncrementCount()
+  {
+    currentCount++;
+
+    /*values are encrypted*/
+    /* localstorage: 서버가 꺼지거나 부라우저안에서 탭을 여러개 띄워도 유지가 됨 */
+    await localStorage.SetAsync("counterLocal", currentCount);
+    /*탭 하나에 대해서만 유지. 브라우저나 탭 끄거나 서버 재시작하면 다 날라감*/
+    await sessionStorage.SetAsync("counterSession", currentCount);
+  }
 }

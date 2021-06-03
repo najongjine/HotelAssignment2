@@ -1,4 +1,5 @@
 ﻿using Business.Repository.IRepository;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using Stripe.Checkout;
@@ -14,10 +15,12 @@ namespace HotelAssignment2_API.Controllers
   public class RoomOrderController : Controller
   {
     private readonly IRoomOrderDetailsRepository _repository;
+    private readonly IEmailSender _emailSender;
 
-    public RoomOrderController(IRoomOrderDetailsRepository repository)
+    public RoomOrderController(IRoomOrderDetailsRepository repository, IEmailSender emailSender)
     {
       _repository = repository;
+      _emailSender = emailSender;
     }
 
     [HttpPost]
@@ -55,6 +58,8 @@ namespace HotelAssignment2_API.Controllers
           {
             return BadRequest(new ErrorModel() { ErrorMessage = "Cannot mark payment as successful" });
           }
+          await _emailSender.SendEmailAsync(details.Email,"Hidden villa payment msg",$"Your booking has been confirmed at HiddenVilla " +
+            $" with order ID : {details.Id}");
           return Ok(result);
         }
         else

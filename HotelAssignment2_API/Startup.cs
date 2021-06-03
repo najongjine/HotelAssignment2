@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -84,6 +85,7 @@ namespace HotelAssignment2_API
       services.AddScoped<IHotelImageRepository, HotelImagesRepository>();
       services.AddScoped<IHotelAmenityRepository, HotelAmenityRepository>();
       services.AddScoped<IRoomOrderDetailsRepository, RoomOrderDetailsRepository>();
+      services.AddScoped<IEmailSender, EmailSender>();
 
       services.AddCors(o => o.AddPolicy("HiddenVilla", builder =>
       {

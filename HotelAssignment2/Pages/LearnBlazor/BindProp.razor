@@ -1,5 +1,6 @@
 ﻿@page "/bindprop"
-@using Model
+@inject ProtectedLocalStorage localStorage
+@inject ProtectedSessionStorage sessionStorage
 
 <h2 class="bg-light border" p-2>
   First Room
@@ -9,12 +10,12 @@
 <br />
 <input type="number" @bind-value="Room.Price" @bind-value:event="oninput" />
 <br />
-<input type="checkbox" @bind-value="Room.IsActive" @bind-value:event="oninput" checked="@(Room.IsActive? "checked":null)"/>
+<input type="checkbox" @bind-value="Room.IsActive" @bind-value:event="oninput" checked="@(Room.IsActive? "checked":null)" />
 <br />
 <span>This room is @(Room.IsActive? "Active":"InActive")</span>
 <br />
 <select @bind="SelectedRoomProp">
-  @foreach(var prop in Room.RoomProps)
+  @foreach (var prop in Room.RoomProps)
   {
     <option value="@prop.Name">@prop.Name</option>
   }
@@ -44,7 +45,12 @@
   }
 </div>
 
+<p>Counter Val From other Page(session): @CounterSession</p>
+<p>Counter Val From other Page(local): @CounterLocal</p>
+
 @code{
+  public int CounterLocal { get; set; }
+  public int CounterSession { get; set; }
   string SelectedRoomProp = "";
   BlazorRoom Room = new BlazorRoom
   {
@@ -59,9 +65,12 @@
   };
   List<BlazorRoom> RoomList = new List<BlazorRoom>();
 
-  protected override void OnInitialized()
+  protected override async Task OnInitializedAsync()
   {
-    base.OnInitialized();
+    var resultLocal = await localStorage.GetAsync<int>("counterLocal");
+    CounterLocal = resultLocal.Success?resultLocal.Value:0;
+    var resultSession = await localStorage.GetAsync<int>("counterSession");
+    CounterSession = resultSession.Success ? resultLocal.Value : 0;
 
     RoomList.Add(new BlazorRoom()
     {

@@ -33,7 +33,9 @@ namespace HiddenVilla_Client.Pages.Authentication
       {
         IsProcessing = false;
 
-        //System.Uri  returnUrl 뽑을때 항상 null임...
+        /* query parameter 에 returnUrl={watever} 이렇게 설정해준게 있으면 
+         * {watever} 여기로 리다이렉트 시켜라
+         */
         var absouleUri = new Uri(navigationManager.Uri);
         var queryParam = HttpUtility.ParseQueryString(absouleUri.Query);
         ReturnUrl = queryParam["returnUrl"];
