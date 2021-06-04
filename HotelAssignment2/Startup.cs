@@ -44,6 +44,7 @@ namespace HotelAssignment2
       services.AddScoped<IDbInitializer, DbInitializer>();
       services.AddScoped<IFileUpload, FileUpload>();
       services.AddScoped<IHotelAmenityRepository, HotelAmenityRepository>();
+      services.AddScoped<IRoomOrderDetailsRepository, RoomOrderDetailsRepository>();
       services.AddRazorPages();
       services.AddHttpContextAccessor();
       services.AddServerSideBlazor();
