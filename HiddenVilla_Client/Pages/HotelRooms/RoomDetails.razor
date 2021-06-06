@@ -4,7 +4,7 @@
 @inject IHotelRoomService hotelRoomService
 @inject IStripePaymentService stripePaymentService
 @inject IRoomOrderDetailsService roomOrderDetailsService
-@attribute [Authorize(Roles=SD.Role_Customer)]
+@attribute [Authorize(Roles="Admin,Customer")]
 <!--HotelBooking not null and OrderDetails not null and HotelRoomDTO not null and  Id == null
   데이터가 fetch 되기 전에 화면이 그려지면 에러가 발생하기 때문에 추가해준 코드
   -->

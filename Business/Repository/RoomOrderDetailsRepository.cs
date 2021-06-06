@@ -32,8 +32,8 @@ namespace Business.Repository
         // datetime to date
         details.CheckInDate = details.CheckInDate.Date;
         details.CheckOutDate = details.CheckOutDate.Date;
+        details.Status= SD.Status_Pending;
         var roomOrder = _mapper.Map<RoomOrderDetailsDTO, RoomOrderDetails>(details);
-        roomOrder.Status = SD.Status_Pending;
         var result = await _db.RoomOrderDetails.AddAsync(roomOrder);
         await _db.SaveChangesAsync();
         return _mapper.Map<RoomOrderDetails, RoomOrderDetailsDTO>(result.Entity);

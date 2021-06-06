@@ -4,6 +4,7 @@ using DataAccess.Data;
 using HotelAssignment2_API.Helper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
@@ -28,22 +29,32 @@ namespace HotelAssignment2_API
 {
   public class Startup
   {
-    public Startup(IConfiguration configuration)
+    public Startup(IConfiguration configuration, IWebHostEnvironment env)
     {
       Configuration = configuration;
+      _Env = env.EnvironmentName;
     }
 
+    public static string _Env { get; set; }
     public IConfiguration Configuration { get; }
 
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+      Console.WriteLine("## ConfigureServices");
+      Console.WriteLine("## ConfigureServices env: "+ _Env);
       // dependency container에 넣는 작업
       services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
       services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
       //클라에서 API 요청 보낼시, 보안에서 체크할 옵션값을 json 파일에서 읽어오는 코드. secret key 작업
+      
       var appSettingSection = Configuration.GetSection("APISettings");
+      if (_Env.ToLower() == "Development".ToLower())
+      {
+        appSettingSection = Configuration.GetSection("LocalAPISettings");
+      }
+      
       /* appsetting.json /  APISettings 밑에 있는 키 네임과 APISettings 객체 안에 있는 동일한 이름의 프로퍼티를 자동으로 맵핑
        dependency injection 기능도 같이 있다*/
       services.Configure<APISettings>(appSettingSection);
@@ -129,14 +140,25 @@ namespace HotelAssignment2_API
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+      Console.WriteLine("## Configure");
       StripeConfiguration.ApiKey = Configuration.GetSection("Stripe")["ApiKey"];
+      app.UseSwagger();
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
-        app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HotelAssignment2_API v1"));
+        app.UseSwaggerUI(c =>
+        {
+          c.SwaggerEndpoint("/swagger/v1/swagger.json", "HotelAssignment2_API v1");
+        });
       }
-
+      else
+      {
+        app.UseSwaggerUI(c =>
+        {
+          c.SwaggerEndpoint("/swagger/v1/swagger.json", "HotelAssignment2_API v1");
+          c.RoutePrefix = string.Empty;
+        });
+      }
       app.UseHttpsRedirection();
       app.UseCors("HiddenVilla");
       app.UseRouting();

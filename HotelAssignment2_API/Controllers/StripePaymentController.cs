@@ -26,6 +26,10 @@ namespace HotelAssignment2_API.Controllers
       try
       {
         var domain = _configuration.GetValue<string>("HiddenVilla_Client_URL");
+        if (HotelAssignment2_API.Startup._Env.ToLower() == "Development".ToLower())
+        {
+          domain = _configuration.GetValue<string>("HiddenVilla_Client_URL_Local");
+        }
         var option = new SessionCreateOptions
         {
           PaymentMethodTypes=new List<string>

@@ -22,7 +22,15 @@ namespace HiddenVilla_Client
       builder.RootComponents.Add<App>("#app");
 
       // adding HttpClient injection. base url을 HotelAssgienment2_API 의 url 주소로 설정했음
-      builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration.GetValue<string>("BaseApiUrl")) });
+      Console.WriteLine("## builder.HostEnvironment.Environment: " + builder.HostEnvironment.Environment);
+      if(builder.HostEnvironment.Environment.ToLower() == "Development".ToLower()) {
+        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration.GetValue<string>("LocalBaseApiUrl")) });
+      }
+      else
+      {
+        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration.GetValue<string>("BaseApiUrl")) });
+      }
+      
       builder.Services.AddBlazoredLocalStorage();
       builder.Services.AddAuthorizationCore();
       builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
