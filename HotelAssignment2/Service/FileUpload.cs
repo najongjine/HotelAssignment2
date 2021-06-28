@@ -1,4 +1,5 @@
 ﻿using HotelAssignment2.Service.IService;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,6 +19,7 @@ namespace HotelAssignment2.Service
     private readonly IConfiguration _configuration;
     public FileUpload(IWebHostEnvironment webHostEnvironment, IConfiguration configuration)
     {
+      Console.WriteLine("## _Env: " + HotelAssignment2.Startup._Env);
       _webHostEnvironment = webHostEnvironment;
       _configuration = configuration;
     }
@@ -48,6 +50,8 @@ namespace HotelAssignment2.Service
         var fileName = Guid.NewGuid().ToString() + fileInfo.Extension;
         var folderDirectory = $"{_webHostEnvironment.WebRootPath}/RoomImages";
         var path = Path.Combine(_webHostEnvironment.WebRootPath,"RoomImages",fileName);
+        Console.WriteLine("## folderDirectory: " + folderDirectory);
+        Console.WriteLine("## path: " + path);
 
         var memoryStream = new MemoryStream();
 
@@ -62,6 +66,13 @@ namespace HotelAssignment2.Service
           memoryStream.WriteTo(fs);
         }
         var url = $"{_configuration.GetValue<string>("ServerURL")}";
+        if (HotelAssignment2.Startup._Env.ToLower()== "Development".ToLower())
+        {
+          url = $"{_configuration.GetValue<string>("LocalServerURL")}";
+          
+        }
+        
+        Console.WriteLine("## url: " + url);
         var fullPath = $"{url}RoomImages/{fileName}";
         return fullPath;
       }

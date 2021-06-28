@@ -30,12 +30,14 @@ namespace HiddenVilla_Client.Service
       if (token == null)
       {
         //pass anonymous identity
-        //return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+        return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
 
         //pass custom identity
+        /*
         return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(
           new[] { new Claim(ClaimTypes.Name, "najongjin3@hotmail.com"), new Claim(ClaimTypes.Role, "master") }, "jwtAuthType"
           )));
+        */
       }
       // putting token in header auto mode.
       _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);

@@ -1,0 +1,1 @@
+Data Source=tcp:hotelassignment2db.database.windows.net,1433;Initial Catalog=HotelAssignment2_db;User Id=adminuser@hotelassignment2db;Password=pr3711!#!&

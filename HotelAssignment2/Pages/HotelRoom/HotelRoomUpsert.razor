@@ -125,6 +125,7 @@
 
   protected override async Task OnInitializedAsync()
   {
+    Console.WriteLine("## NavigationManager.Uri: " + NavigationManager.Uri);
     // 코드내부에서 authentication을 하는 방법
     // AuthenticationState 프로퍼티가 숨어 있어서 꺼내는 작업
     var authticationState = await AuthenticationState;
@@ -132,6 +133,7 @@
     /* 인증되지 않은 사용자면 로그인 페이지로 보내고, 로그인후 return url은 현재 페이지 주소 */
     if (!authticationState.User.IsInRole(Common.SD.Role_Admin))
     {
+
       var uri = new Uri(NavigationManager.Uri);
       NavigationManager.NavigateTo($"/identity/account/login?returnUrl={uri.LocalPath}");
     }

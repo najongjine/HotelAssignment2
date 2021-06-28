@@ -23,11 +23,13 @@ namespace HotelAssignment2
 {
   public class Startup
   {
-    public Startup(IConfiguration configuration)
+    public Startup(IConfiguration configuration, IWebHostEnvironment env)
     {
       Configuration = configuration;
+      _Env = env.EnvironmentName;
     }
 
+    public static string _Env { get; set; }
     public IConfiguration Configuration { get; }
 
     // This method gets called by the runtime. Use this method to add services to the container.
