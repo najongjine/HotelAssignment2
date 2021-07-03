@@ -1,29 +1,34 @@
-﻿@page "/"
+﻿@using Microsoft.AspNetCore.Hosting;
+
+@page "/"
 Index Page
 @DummyStr
 
 <div>
-  @foreach(var e in dummyList)
-      {
-        <div>
-          <p>@e.Name, @e.Birthday, input1: <input @bind="@DummyStr" /> <button @onclick="(arg)=>ChangeFunc(e,DummyStr)">change</button></p>
+  @foreach (var e in dummyList)
+  {
+    <div>
+      <p>@e.Name, @e.Birthday, input1: <input @bind="@DummyStr" /> <button @onclick="(arg)=>ChangeFunc(e,DummyStr)">change</button></p>
 
-        </div>
-      }
+    </div>
+  }
 </div>
 <div>
-  input1: <input @bind="@DummyStr" @bind:event="oninput"/>
+  input1: <input @bind="@DummyStr" @bind:event="oninput" />
 </div>
 
 <div>
-  input2: <input @bind="@DummyStr" @bind:event="oninput"/>
+  input2: <input @bind="@DummyStr" @bind:event="oninput" />
 </div>
 @code{
-  private int DummyStr { get; set; } 
-  private List<Employee> dummyList=new List<Employee>();
+  private int DummyStr { get; set; }
+  private List<Employee> dummyList = new List<Employee>();
+  private readonly IWebHostEnvironment _webHostEnvironment;
 
   protected override void OnInitialized()
   {
+    Console.WriteLine("## _Env in webassem: " + HotelAssignment2.Startup._Env);
+    //Console.WriteLine("## _webHostEnvironment.EnvironmentName: " + _webHostEnvironment.EnvironmentName);
     var employ1 = new Employee { Birthday = 1, Name = 1 };
     dummyList.Add(employ1);
 
