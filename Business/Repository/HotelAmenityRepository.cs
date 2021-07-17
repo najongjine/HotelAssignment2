@@ -2,6 +2,7 @@
 using Business.Repository.IRepository;
 using DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Models;
 using System;
 using System.Collections.Generic;
@@ -15,14 +16,16 @@ namespace Business.Repository
   {
     private readonly ApplicationDbContext _db;
     private readonly IMapper _mapper;
+    private readonly ILogger _logger;
 
     // it is alrdy iniside the dependency injection container
     // it's getting mapper and db using dependency injection inside the constructor
     // this style is called dpendency injection
-    public HotelAmenityRepository(ApplicationDbContext db, IMapper mapper)
+    public HotelAmenityRepository(ApplicationDbContext db, IMapper mapper, ILogger<HotelAmenityRepository> logger)
     {
       _mapper = mapper;
       _db = db;
+      _logger = logger;
     }
     public async Task<int> DeleteHotelAmenity(int Id)
     {
@@ -83,12 +86,12 @@ namespace Business.Repository
       {
         if (amenityId < 1)
         {
-          var amenity = _mapper.Map<HotelAmenity, HotelAmenityDTO>(await _db.HotelAmenities.FirstOrDefaultAsync(x => x.Name.ToLower() == amenityName.ToLower()));
+          var amenity = _mapper.Map<HotelAmenity, HotelAmenityDTO>(await _db.HotelAmenities.FirstOrDefaultAsync(x => x.Name1.ToLower() == amenityName.ToLower()));
           return amenity;
         }
         else
         {
-          var amenity = _mapper.Map<HotelAmenity, HotelAmenityDTO>(await _db.HotelAmenities.FirstOrDefaultAsync(x => x.Name.ToLower() == amenityName.ToLower() && x.Id != amenityId));
+          var amenity = _mapper.Map<HotelAmenity, HotelAmenityDTO>(await _db.HotelAmenities.FirstOrDefaultAsync(x => x.Name1.ToLower() == amenityName.ToLower() && x.Id != amenityId));
           return amenity;
         }
       }

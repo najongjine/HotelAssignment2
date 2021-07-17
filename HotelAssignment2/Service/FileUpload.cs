@@ -66,11 +66,6 @@ namespace HotelAssignment2.Service
           memoryStream.WriteTo(fs);
         }
         var url = $"{_configuration.GetValue<string>("ServerURL")}";
-        if (HotelAssignment2.Startup._Env.ToLower()== "Development".ToLower())
-        {
-          url = $"{_configuration.GetValue<string>("LocalServerURL")}";
-          
-        }
         
         Console.WriteLine("## url: " + url);
         var fullPath = $"{url}RoomImages/{fileName}";

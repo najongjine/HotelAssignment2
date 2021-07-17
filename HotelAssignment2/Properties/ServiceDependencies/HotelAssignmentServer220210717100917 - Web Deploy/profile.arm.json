@@ -21,7 +21,7 @@
     },
     "resourceName": {
       "type": "string",
-      "defaultValue": "HotelAssignment220210628122407",
+      "defaultValue": "HotelAssignmentServer220210717100917",
       "metadata": {
         "description": "Name of the main resource to be created by this template."
       }

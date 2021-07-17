@@ -51,7 +51,7 @@
             {
               "kind": "v12.0",
               "location": "[parameters('resourceLocation')]",
-              "name": "hotelassignment2db",
+              "name": "hotelassignment2dbserver20210717",
               "type": "Microsoft.Sql/servers",
               "apiVersion": "2017-10-01-preview"
             },
@@ -63,11 +63,11 @@
               },
               "kind": "v12.0,user",
               "location": "[parameters('resourceLocation')]",
-              "name": "hotelassignment2db/HotelAssignment2_db",
+              "name": "hotelassignment2dbserver20210717/HotelAssignment2_db",
               "type": "Microsoft.Sql/servers/databases",
               "apiVersion": "2017-10-01-preview",
               "dependsOn": [
-                "hotelassignment2db"
+                "hotelassignment2dbserver20210717"
               ]
             }
           ]
